@@ -35,8 +35,7 @@
   "minimum-stability": "stable",
   "prefer-stable": true,
   "require": {
-    "php": ">=7.3 <7.4",
-    "ext-apc": "*",
+    "php": ">=8.3 <8.5",
     "ext-apcu": "*",
     "ext-bz2": "*",
     "ext-ctype": "*",
@@ -49,7 +48,6 @@
     "ext-gettext": "*",
     "ext-gmp": "*",
     "ext-iconv": "*",
-    "ext-imap": "*",
     "ext-intl": "*",
     "ext-json": "*",
     "ext-libxml": "*",

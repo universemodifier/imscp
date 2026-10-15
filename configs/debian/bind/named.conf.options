@@ -16,7 +16,7 @@ options {
 
         auth-nxdomain no;    # conform to RFC1035
 
-        dnssec-enable no;
+        # dnssec-enable was removed in BIND 9.18 (Ubuntu 24.04 and Debian 13).
         dnssec-validation no;
 
         // Listen to all IPv4 and IPv6 interfaces

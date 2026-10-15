@@ -178,6 +178,15 @@ sub _init
     $self->{'bkpDir'} = "$self->{'cfgDir'}/backup";
     $self->{'wrkDir'} = "$self->{'cfgDir'}/working";
     $self->{'config'} = $self->{'named'}->{'config'};
+
+    # Ubuntu 24.04 and Debian 13 ship BIND as named.service. Enabling the
+    # bind9 alias is refused by systemd, and /etc/default/bind9 is gone.
+    if ( $::imscpConfig{'DISTRO_CODENAME'} =~ /^(?:noble|trixie)$/ ) {
+        $self->{'config'}->{'NAMED_SERVICE'} = 'named';
+        $self->{'config'}->{'BIND_CONF_DEFAULT_FILE'} = '/etc/default/named'
+            if -f '/etc/default/named';
+    }
+
     $self;
 }
 
@@ -605,7 +614,7 @@ sub _buildConf
 
         # Fix for #IP-1333
         my $service = iMSCP::Service->getInstance();
-        if ( $service->isSystemd() ) {
+        if ( $service->isSystemd() && $service->hasService( 'bind9-resolvconf' ) ) {
             if ( $self->{'config'}->{'LOCAL_DNS_RESOLVER'} eq 'yes' ) {
                 $service->enable( 'bind9-resolvconf' );
             } else {

@@ -1,7 +1,14 @@
 #!/bin/sh
 PERCENT=$1
 USER=$2
-cat << EOF | {DOVECOT_DELIVER_PATH} -d $USER -o "plugin/quota=maildir:User quota:noenforcing"
+# Dovecot 2.3 accepts a plugin override so the warning itself is not rejected.
+# Dovecot 2.4 removed that plugin setting.
+if /usr/sbin/dovecot --version 2>/dev/null | grep -q '^2\.3'; then
+    set -- -d "$USER" -o "plugin/quota=maildir:User quota:noenforcing"
+else
+    set -- -d "$USER"
+fi
+cat << EOF | {DOVECOT_DELIVER_PATH} "$@"
 From: postmaster@{HOSTNAME}
 Subject: i-MSCP Quota Warning
 

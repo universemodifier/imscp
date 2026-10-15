@@ -2,8 +2,7 @@
 
 ## Supported Ubuntu versions
 
-- Ubuntu Xenial Xerus 16.04
-- Ubuntu Bionic Beaver 18.04
+- Ubuntu 24.04 LTS (Noble Numbat)
 
 ## Installation
 

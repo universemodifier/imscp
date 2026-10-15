@@ -29,7 +29,7 @@ service apache2 stop
 
 # Remove divert if any
 if [ -f /usr/lib/apache2/modules/mod_proxy_fcgi.so-DIST ] ; then
-    rm -f rm /usr/lib/apache2/modules/mod_proxy_fcgi.so
+    rm -f /usr/lib/apache2/modules/mod_proxy_fcgi.so
     dpkg-divert --rename --remove /usr/lib/apache2/modules/mod_proxy_fcgi.so
 fi
 

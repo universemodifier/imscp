@@ -889,13 +889,23 @@ sub _addDmnDb
         $tplFileC
     );
     my $net = iMSCP::Net->getInstance();
-    my $domainIP = $net->isRoutableAddr( $data->{'DOMAIN_IP'} )
-        ? $data->{'DOMAIN_IP'}
+    my $domainAddr = $data->{'DOMAIN_IP'};
+    my $domainIsIp = $net->isValidAddr( $domainAddr );
+    my $domainVersion = $domainIsIp ? $net->getAddrVersion( $domainAddr ) : '';
+    # A dual-stack host whose domain address is IPv6 still needs its public
+    # IPv4 in the glue. The address-family loop below emits every A record
+    # before any AAAA record.
+    my $domainIP = ( $domainIsIp && $net->isRoutableAddr( $domainAddr ) && $domainVersion eq 'ipv4' )
+        ? $domainAddr
         : $data->{'BASE_SERVER_PUBLIC_IP'};
+    my $domainIP6 = ( $domainIsIp && $net->isRoutableAddr( $domainAddr ) && $domainVersion eq 'ipv6' )
+        ? $domainAddr
+        : undef;
 
     unless ( $nsRRb eq '' && $gRRb eq '' ) {
         my @nsIPs = (
             $domainIP,
+            ( defined $domainIP6 ? $domainIP6 : () ),
             ( $self->{'config'}->{'SECONDARY_DNS'} eq 'no'
                 ? () : split /(?:[;,]| )/, $self->{'config'}->{'SECONDARY_DNS'}
             )

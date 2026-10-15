@@ -125,7 +125,7 @@ use warnings;
     # Available SQL server vendors/versions depend on your distribution.
     # Please consult the autoinstaller/Packages/<distro>-<codename>.xml file.
     # Accepted values are the XML node names that describe SQL servers. For
-    # instance: 'remote_server', 'mysql_5.7', 'mariadb_10.1', 'mariadb_10.2'
+    # instance: 'remote_server', 'mariadb_10.11', 'mariadb_11.8'
     #
     # Leave this parameter blank for use of default value: default SQL server
     # as set in distribution packages file.
@@ -405,7 +405,7 @@ use warnings;
 
     # PHP version for customers
     #
-    # Possible values: php5.6, php7.0, php7.1, php7.2, or php7.3 (recommended)
+    # Possible values: php8.3 (Ubuntu 24.04) or php8.4 (Debian 13)
     #
     # Leave this parameter blank for us of default value: Default PHP version
     # as set in distribution packages file.

@@ -154,11 +154,13 @@ function client_validate_NAME($name, &$errorString)
     }
 
 
-    if (strpos($name, '_') == 0) {
-        $name = substr($name, 1);
-    }
+    // Underscores are valid in names that are not hostnames, for example
+    // default._domainkey. The CNAME check in this file already strips them.
+    $name = str_replace('_', '', $name);
 
-    if (strpos($name, '*.') == 0) {
+    // A missing match used to compare equal to 0 and strip two characters
+    // from every ordinary name. Wildcards are allowed only at the start.
+    if (strpos($name, '*.') === 0) {
         $name = substr($name, 2);
     }
 

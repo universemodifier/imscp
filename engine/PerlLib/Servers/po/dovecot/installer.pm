@@ -569,20 +569,27 @@ sub _buildConf
         )->delFile();
     }
 
+    my $dovecot24 = 0;
+    if ( `dovecot --version 2>/dev/null` =~ /^(\d+\.\d+)/ ) {
+        $dovecot24 = version->parse( $1 ) >= version->parse( '2.4' );
+    }
+
     my %cfgFiles = (
-        'dovecot.conf'             => [
+        ( $dovecot24 ? 'dovecot-2.4.conf' : 'dovecot.conf' ) => [
             "$self->{'config'}->{'DOVECOT_CONF_DIR'}/dovecot.conf",
             $::imscpConfig{'ROOT_USER'},
             $self->{'mta'}->{'config'}->{'MTA_MAILBOX_GID_NAME'},
             0640
         ],
-        'dovecot-sql.conf'         => [
-            "$self->{'config'}->{'DOVECOT_CONF_DIR'}/dovecot-sql.conf",
-            $::imscpConfig{'ROOT_USER'},
-            $self->{'mta'}->{'config'}->{'MTA_MAILBOX_GID_NAME'},
-            0640
-        ],
-        'dovecot-managesieve.conf' => [
+        ( $dovecot24 ? () : (
+            'dovecot-sql.conf' => [
+                "$self->{'config'}->{'DOVECOT_CONF_DIR'}/dovecot-sql.conf",
+                $::imscpConfig{'ROOT_USER'},
+                $self->{'mta'}->{'config'}->{'MTA_MAILBOX_GID_NAME'},
+                0640
+            ]
+        ) ),
+        ( $dovecot24 ? 'dovecot-managesieve-2.4.conf' : 'dovecot-managesieve.conf' ) => [
             "$self->{'config'}->{'DOVECOT_CONF_DIR'}/imscp.d/dovecot-managesieve.conf",
             $::imscpConfig{'ROOT_USER'},
             $self->{'mta'}->{'config'}->{'MTA_MAILBOX_GID_NAME'},
@@ -614,19 +621,40 @@ sub _buildConf
                 );
             }
 
-            if ( $conffile eq 'dovecot.conf' ) {
+            if ( $conffile eq 'dovecot.conf' || $conffile eq 'dovecot-2.4.conf' ) {
                 my $ssl = ::setupGetQuestion( 'SERVICES_SSL_ENABLED' );
                 $cfgTpl .= "\nssl = $ssl\n";
 
-                # Fixme: Find a better way to guess libssl version
-                if ( $ssl eq 'yes' ) {
-                    unless ( `ldd /usr/lib/dovecot/libdovecot-login.so | grep libssl.so` =~ /libssl.so.(\d.\d)/ ) {
-                        error( "Couldn't guess libssl version against which Dovecot has been built" );
-                        return 1;
+                if ( $ssl eq 'yes' && $conffile eq 'dovecot-2.4.conf' ) {
+                    # OpenSSL 3 is the only library on Debian 13. The 2.3
+                    # ssl_cert/ssl_key settings were renamed in 2.4.
+                    $cfgTpl .= <<"EOF";
+ssl_min_protocol = TLSv1.2
+ssl_server_cert_file = $::imscpConfig{'CONF_DIR'}/imscp_services.pem
+ssl_server_key_file = $::imscpConfig{'CONF_DIR'}/imscp_services.pem
+EOF
+                } elsif ( $ssl eq 'yes' ) {
+                    my $libssl = '';
+                    for my $library (
+                        '/usr/lib/dovecot/libdovecot-login.so',
+                        '/usr/lib/x86_64-linux-gnu/dovecot/libdovecot-login.so'
+                    ) {
+                        next unless -f $library;
+                        $libssl = `ldd $library 2>/dev/null | grep libssl.so`;
+                        last if length $libssl;
                     }
 
+                    # libssl.so.3 does not match the old major.minor pattern.
+                    # When the library cannot be identified, assume OpenSSL 1.1
+                    # or newer. Ubuntu 24.04 and Debian 13 both ship OpenSSL 3.
+                    my $modern = 1;
+                    if ( $libssl =~ /libssl\.so\.(\d+(?:\.\d+)?)/ ) {
+                        $modern = version->parse( $1 ) >= version->parse( '1.1' );
+                    }
+                    $cfgTpl .= $modern
+                        ? "ssl_protocols = !SSLv3 !TLSv1 !TLSv1.1\n"
+                        : "ssl_protocols = !SSLv2 !SSLv3 !TLSv1 !TLSv1.1\n";
                     $cfgTpl .= <<"EOF";
-ssl_protocols = @{[ version->parse( $1 ) >= version->parse( '1.1' ) ? '!SSLv3 !TLSv1 !TLSv1.1' : '!SSLv2 !SSLv3 !TLSv1 !TLSv1.1' ]}
 ssl_cert = <$::imscpConfig{'CONF_DIR'}/imscp_services.pem
 ssl_key = <$::imscpConfig{'CONF_DIR'}/imscp_services.pem
 EOF

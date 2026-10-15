@@ -406,7 +406,7 @@ sub _buildPhpConfFiles
     $rs = $self->{'httpd'}->disableModules(
         'actions', 'fastcgi', 'fcgid', 'fcgid_imscp', 'suexec', 'php5',
         'php5_cgi', 'php5filter',
-        'php5.6', 'php7.0', 'php7.1', 'php7.2', 'php7.3',
+        _enabledPhpModules( $self->{'config'}->{'HTTPD_MODS_ENABLED_DIR'} ),
         'proxy_fcgi', 'proxy_handler', 'mpm_itk', 'mpm_event', 'mpm_prefork',
         'mpm_worker'
     );
@@ -496,11 +496,7 @@ sub _buildApacheConfFiles
     $rs ||= $self->{'httpd'}->enableSites( '00_nameserver.conf' );
     $rs ||= $self->{'httpd'}->enableConfs( '00_imscp.conf' );
     $rs ||= $self->{'httpd'}->disableConfs(
-        'php5.6-cgi.conf', 'php5.6-fpm.conf',
-        'php7.0-cgi.conf', 'php7.0-fpm.conf',
-        'php7.1-cgi.conf', 'php7.1-fpm.conf',
-        'php7.3-cgi.conf', 'php7.2-fpm.conf',
-        'php7.3-cgi.conf', 'php7.3-fpm.conf',
+        _phpFpmCgiConfs( "$self->{'config'}->{'HTTPD_CONF_DIR'}/conf-available" ),
         'serve-cgi-bin.conf'
     );
     $rs ||= $self->{'httpd'}->disableSites( 'default', 'default-ssl', '000-default.conf', 'default-ssl.conf' );
@@ -802,6 +798,44 @@ sub _cleanup
     }
 
     $rs;
+}
+
+=back
+
+=head1 PRIVATE FUNCTIONS
+
+=over 4
+
+=item _enabledPhpModules( $modsEnabledDir )
+
+ Return the names of PHP modules currently enabled for Apache.
+
+=cut
+
+sub _enabledPhpModules
+{
+    my ( $dir ) = @_;
+
+    return () unless defined $dir && opendir my $dh, $dir;
+    my @names = map { s/\.load\z//r } grep { /\Aphp.*\.load\z/ } readdir $dh;
+    closedir $dh;
+    @names;
+}
+
+=item _phpFpmCgiConfs( $confAvailableDir )
+
+ Return Apache conf names that enable a versioned PHP CGI or FPM module.
+
+=cut
+
+sub _phpFpmCgiConfs
+{
+    my ( $dir ) = @_;
+
+    return () unless defined $dir && opendir my $dh, $dir;
+    my @names = grep { /\Aphp\d.*-(?:cgi|fpm)\.conf\z/ } readdir $dh;
+    closedir $dh;
+    @names;
 }
 
 =back

@@ -767,38 +767,68 @@ deb $repository->{'repository'}
 deb-src $repository->{'repository'}
 EOF
 
-        # Hide "apt-key output should not be parsed (stdout is not a terminal)"
-        # warning that is raised in newest apt-key versions. Our usage of
-        # apt-key is not dangerous (not parsing)
-        local $ENV{'APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE'} = TRUE;
+        # apt-key was removed in Ubuntu 24.04 and Debian 13. Newer apt wants
+        # the key in /etc/apt/keyrings and a signed-by option on the deb line.
+        my $aptKey = -x '/usr/bin/apt-key';
+        $ENV{'APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE'} = TRUE if $aptKey;
 
+        my $signedBy = '';
         if ( $repository->{'repository_key_srv'}
             && $repository->{'repository_key_id'}
         ) {
-            # Add the repository key from the given key server
-            $rs = execute(
-                [
-                    '/usr/bin/apt-key',
-                    'adv',
-                    '--recv-keys',
-                    '--keyserver', $repository->{'repository_key_srv'},
-                    $repository->{'repository_key_id'}
-                ],
-                \my $stdout,
-                \my $stderr
-            );
-            debug( $stdout ) if length $stdout;
-            error( $stderr || 'Unknown error' ) if $rs;
-            return $rs if $rs;
+            if ( $aptKey ) {
+                $rs = execute(
+                    [
+                        '/usr/bin/apt-key',
+                        'adv',
+                        '--recv-keys',
+                        '--keyserver', $repository->{'repository_key_srv'},
+                        $repository->{'repository_key_id'}
+                    ],
+                    \my $stdout,
+                    \my $stderr
+                );
+                debug( $stdout ) if length $stdout;
+                error( $stderr || 'Unknown error' ) if $rs;
+                return $rs if $rs;
 
-            # Workaround https://bugs.launchpad.net/ubuntu/+source/gnupg2/+bug/1633754
-            execute(
-                [ '/usr/bin/pkill', '-TERM', 'dirmngr' ],
-                \$stdout,
-                \$stderr
-            );
+                execute(
+                    [ '/usr/bin/pkill', '-TERM', 'dirmngr' ],
+                    \$stdout,
+                    \$stderr
+                );
+            } else {
+                my $keyFile = File::Temp->new();
+                $keyFile->close();
+                $rs = execute(
+                    [
+                        '/usr/bin/gpg',
+                        '--keyserver', $repository->{'repository_key_srv'},
+                        '--recv-keys', $repository->{'repository_key_id'}
+                    ],
+                    \my $stdout,
+                    \my $stderr
+                );
+                debug( $stdout ) if length $stdout;
+                error( $stderr || 'Unknown error' ) if $rs;
+                return $rs if $rs;
+
+                $rs = execute(
+                    [
+                        '/usr/bin/gpg', '--export',
+                        $repository->{'repository_key_id'}
+                    ],
+                    \my $exported,
+                    \$stderr
+                );
+                error( $stderr || 'Unknown error' ) if $rs;
+                return $rs if $rs;
+                $signedBy = $self->_installAptKeyring(
+                    $repository->{'repository'}, $exported
+                );
+                return 1 unless length $signedBy;
+            }
         } elsif ( $repository->{'repository_key_uri'} ) {
-            # Add the repository key by fetching it first from the given URI
             my $keyFile = File::Temp->new();
             $keyFile->close();
             $rs = execute(
@@ -817,19 +847,80 @@ EOF
             error( $stderr || 'Unknown error' ) if $rs;
             return $rs if $rs;
 
-            $rs ||= execute(
-                [ '/usr/bin/apt-key', 'add', $keyFile ],
-                \$stdout,
-                \$stderr
-            );
-            debug( $stdout ) if length $stdout;
-            error( $stderr || 'Unknown error' ) if $rs;
-            return $rs if $rs;
+            if ( $aptKey ) {
+                $rs = execute(
+                    [ '/usr/bin/apt-key', 'add', $keyFile->filename() ],
+                    \$stdout,
+                    \$stderr
+                );
+                debug( $stdout ) if length $stdout;
+                error( $stderr || 'Unknown error' ) if $rs;
+                return $rs if $rs;
+            } else {
+                $signedBy = $self->_installAptKeyring(
+                    $repository->{'repository'},
+                    undef,
+                    $keyFile->filename()
+                );
+                return 1 unless length $signedBy;
+            }
+        }
+
+        if ( length $signedBy ) {
+            my $repo = $repository->{'repository'};
+            $fileC =~ s/^(deb(?:-src)?) \Q$repo\E/$1 [signed-by=$signedBy] $repo/mg;
         }
     }
 
     $file->set( $fileC );
     $file->save();
+}
+
+=item _installAptKeyring( $repository, $inline [, $keyFile ] )
+
+ Store a repository key where apt on Ubuntu 24.04 and Debian 13 looks for it.
+
+ Param string $repository Repository line, used to name the keyring
+ Param string|undef $inline Exported key material, when there is no file
+ Param string $keyFile OPTIONAL Path of a downloaded key
+ Return string Keyring path, or an empty string on failure
+
+=cut
+
+sub _installAptKeyring
+{
+    my ( undef, $repository, $inline, $keyFile ) = @_;
+
+    my $dir = '/etc/apt/keyrings';
+    my $rs = iMSCP::Dir->new( dirname => $dir )->make( {
+        user  => $::imscpConfig{'ROOT_USER'} || 'root',
+        group => $::imscpConfig{'ROOT_GROUP'} || 'root',
+        mode  => 0755
+    } );
+    return '' if $rs;
+
+    ( my $name = $repository ) =~ s/\W+/_/g;
+    my $dest = "$dir/imscp-" . substr( $name, 0, 80 ) . '.gpg';
+
+    if ( defined $keyFile && length $keyFile ) {
+        $rs = execute(
+            [ '/usr/bin/gpg', '--batch', '--yes', '--dearmor', '-o', $dest, $keyFile ],
+            \my $stdout,
+            \my $stderr
+        );
+        if ( $rs ) {
+            debug( $stderr ) if length $stderr;
+            $rs = iMSCP::File->new( filename => $keyFile )->copyFile( $dest );
+        }
+    } else {
+        my $tmp = File::Temp->new();
+        print $tmp $inline;
+        close $tmp;
+        $rs = iMSCP::File->new( filename => $tmp->filename )->copyFile( $dest );
+    }
+
+    return '' if $rs;
+    $dest;
 }
 
 =item _processAptPreferences( )

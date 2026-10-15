@@ -123,12 +123,14 @@ sub createUser
 
     defined $user or die( '$user parameter is not defined' );
     defined $host or die( '$host parameter is not defined' );
-    defined $user or die( '$password parameter is not defined' );
+    defined $password or die( '$password parameter is not defined' );
 
     eval {
         my $dbh = iMSCP::Database->factory()->getRawDb();
+        # MariaDB 10.11 and 11.8 can default new accounts to a plugin that
+        # PHP's mysqlnd cannot use. Pin the panel accounts to the native plugin.
         $dbh->do(
-            'CREATE USER ?@? IDENTIFIED BY ?',
+            q{CREATE USER ?@? IDENTIFIED VIA mysql_native_password USING CONCAT('*', UPPER(SHA1(UNHEX(SHA1(?)))))},
             undef,
             $user,
             $host,

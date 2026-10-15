@@ -2,9 +2,7 @@
 
 ## Supported Debian versions
 
-- Debian Jessie (8.x),
-- Debian Stretch (9.x)
-- Debian Buster (10.x)
+- Debian 13 (Trixie), including 13.7
 
 ## Installation
 
