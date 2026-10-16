@@ -414,6 +414,37 @@ sub _setupDatabase
     $rs;
 }
 
+=item _tlsCertificateDirectives( )
+
+ Certificate directives for the services certificate.
+
+ ProFTPD 1.3.8 has separate RSA and EC directives. An EC key in
+ TLSRSACertificateFile is ignored for the chain and logged as a mismatch.
+
+ Return string
+
+=cut
+
+sub _tlsCertificateDirectives
+{
+    my $certFile = "$::imscpConfig{'CONF_DIR'}/imscp_services.pem";
+    my $kind = 'TLSRSA';
+
+    if ( -f $certFile ) {
+        my $stdout = '';
+        my $stderr = '';
+        execute(
+            [ 'openssl', 'pkey', '-in', $certFile, '-noout', '-text' ],
+            \$stdout,
+            \$stderr
+        );
+        $kind = 'TLSEC' if $stdout =~ /EC Private-Key|id-ecPublicKey/;
+    }
+
+    "  ${kind}CertificateFile    $certFile\n"
+        . "  ${kind}CertificateKeyFile $certFile";
+}
+
 =item _buildConfigFile( )
 
  Build configuration file
@@ -451,6 +482,11 @@ sub _buildConfigFile
                 < version->parse( '1.3.6' ) ? 'NoCertRequest ' : (),
             'NoSessionReuseRequired'
         )),
+        # TLSv1 means TLS 1.0 only. OpenSSL 3 disables that protocol, so the
+        # handshake fails with "no protocols available".
+        TLSPROTOCOL             => version->parse( $self->{'config'}->{'PROFTPD_VERSION'} )
+            >= version->parse( '1.3.7' ) ? 'TLSv1.2 TLSv1.3' : 'TLSv1.2',
+        TLSCERT_DIRECTIVES      => $self->_tlsCertificateDirectives( ),
         MAX_INSTANCES           => $self->{'config'}->{'MAX_INSTANCES'},
         MAX_CLIENT_PER_HOST     => $self->{'config'}->{'MAX_CLIENT_PER_HOST'}
     };
@@ -483,15 +519,26 @@ sub _buildConfigFile
   TLSRequired              off
   TLSLog                   /var/log/proftpd/ftp_ssl.log
   TLSOptions               {TLSOPTIONS}
-  TLSRSACertificateFile    {CONF_DIR}/{CERTIFICATE}.pem
-  TLSRSACertificateKeyFile {CONF_DIR}/{CERTIFICATE}.pem
+{TLSCERT_DIRECTIVES}
   TLSVerifyClient          off
 </IfModule>
 </Global>
 <IfModule mod_tls.c>
-  TLSProtocol TLSv1
+  TLSProtocol {TLSPROTOCOL}
 </IfModule>
 EOF
+        # Intermediates live beside the services certificate when it was
+        # replaced by a CA-issued chain. The RSA certificate directive only
+        # sends the first certificate.
+        my $chainFile = "$::imscpConfig{'CONF_DIR'}/imscp_services.chain.pem";
+        if ( -f $chainFile ) {
+            $cfgTpl .= <<"EOF";
+
+<IfModule mod_tls.c>
+  TLSCertificateChainFile $chainFile
+</IfModule>
+EOF
+        }
     }
 
     my $baseServerIp = ::setupGetQuestion( 'BASE_SERVER_IP' );
