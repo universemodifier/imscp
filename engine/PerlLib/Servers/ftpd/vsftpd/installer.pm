@@ -194,8 +194,8 @@ sub _dialogForPassivePortRange
         && !grep ( $_ eq iMSCP::Getopt->reconfigure, qw/ ftpd servers all / )
         && length $value
         && isValidNumberRange( $value, \$startOfRange, \$endOfRange )
-        && isNumberInRange( $startOfRange, 32768, 60999 )
-        && isNumberInRange( $endOfRange, $startOfRange, 60999 )
+        && isNumberInRange( $startOfRange, 32768, 65535 )
+        && isNumberInRange( $endOfRange, $startOfRange, 65535 )
     ) {
         ::setupSetQuestion( 'FTPD_PASSIVE_PORT_RANGE', $value );
         return 20;
@@ -210,8 +210,8 @@ If the FTP server is behind a NAT, you \\ZbMUST\\Zb not forget to forward these 
 EOF
         if ( $ret != 30 ) {
             if ( !isValidNumberRange( $value, \$startOfRange, \$endOfRange )
-                || !isNumberInRange( $startOfRange, 32768, 60999 )
-                || !isNumberInRange( $endOfRange, $startOfRange, 60999 )
+                || !isNumberInRange( $startOfRange, 32768, 65535 )
+                || !isNumberInRange( $endOfRange, $startOfRange, 65535 )
             ) {
                 $msg = $LAST_VALIDATION_ERROR;
             } else {
