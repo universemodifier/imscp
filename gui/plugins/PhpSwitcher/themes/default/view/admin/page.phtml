@@ -1,0 +1,433 @@
+<?php
+/** @noinspection
+ * PhpUnhandledExceptionInspection
+ * PhpDocMissingThrowsInspection 
+ */
+
+$defaultPhpVersion = (new iMSCP_Config_Handler_File(iMSCP_Registry::get('config')['CONF_DIR'] . '/php/php.data'))['PHP_VERSION'];
+$isFpmHttpdServer = iMSCP_Registry::get('config')['HTTPD_SERVER'] == 'apache_php_fpm';
+?>
+
+<style>
+    #php_dialog { display: none; }
+    .styling { white-space: pre-wrap; }
+    #tabs-1, #tabs-2, #tabs-3 { padding: 0; }
+    .flash_message { display: none; }
+</style>
+
+<script>
+    $(function () {
+        var $dataTable;
+
+        function flashMessage(type, message) {
+            $(".flash_message").remove();
+            $("<div>", {"class": "flash_message " + type, "html": $.parseHTML(message), "hide": true})
+                .prependTo(".body").trigger('message_timeout');
+        }
+
+        window.confirm = (function () {
+            var native = window.confirm;
+            return function (msg, callback) {
+                ($.imscp && $.isFunction($.imscp.confirm)) ? $.imscp.confirm(msg, callback) : callback(native(msg));
+            }
+        })();
+
+        function doRequest(rType, action, data) {
+            return $.ajax({
+                dataType: "json",
+                type: rType,
+                url: "/admin/phpswitcher?action=" + action,
+                data: data,
+                timeout: 5000
+            });
+        }
+
+        function createDialog(title, action) {
+            $("#tabs").tabs({active: 0});
+
+            return $("#php_dialog").dialog({
+                autoOpen: false,
+                height: "auto",
+                width: 650,
+                modal: true,
+                title: title,
+                buttons: [
+                    {
+                        text: "<?= tojs(tr('Save')); ?>",
+                        click: function () {
+                            doRequest('POST', action, $("#php_frm").serialize()).done(function (data, textStatus, jqXHR) {
+                                $("#php_dialog").dialog("close");
+                                flashMessage((jqXHR.status === 200) ? "success" : "info", data.message);
+                                $dataTable.fnDraw();
+                            });
+                        }
+                    },
+                    {
+                        text: "<?= tojs(tr('Cancel')); ?>",
+                        click: function () {
+                            $(this).dialog("close");
+                        }
+                    }
+
+                ],
+                open: function () {
+                    if (action === "edit") {
+                        var frm = $("#php_frm");
+                        $.each($(this).data("data"), function (k, v) {
+                            $("#" + k, frm).val(v);
+                        })
+                    }
+                },
+                close: function () {
+                    $("#php_frm").get(0).reset()
+                }
+            });
+        }
+
+        createDialog(''); // Initialize dialog
+
+        jQuery.fn.dataTableExt.oApi.fnProcessingIndicator = function (settings, onoff) {
+            if (typeof (onoff) == "undefined") {
+                onoff = true;
+            }
+            this.oApi._fnProcessingDisplay(settings, onoff);
+        };
+
+        $dataTable = $(".datatable").dataTable({
+            language: <?= getDataTablesPluginTranslations(); ?>,
+            displayLength: 10,
+            processing: true,
+            serverSide: true,
+            pagingType: "simple",
+            ajaxSource: "/admin/phpswitcher?action=table",
+            stateSave: true,
+            columnDefs: [{sortable: false, searchable: false, targets: [5, 6]}],
+            columns: [
+                {data: "version_version"},
+                {data: "version_is_packaged"},
+                {data: "version_cgi_binary_path"},
+                {data: "version_fpm_binary_path"},
+                {data: "version_name"},
+                {data: "version_status", "class": "styling"},
+                {data: "version_actions"}
+            ],
+            serverData: function (source, data, callback) {
+                $.ajax({
+                    dataType: "json",
+                    type: "GET",
+                    url: source,
+                    data: data,
+                    success: callback,
+                    timeout: 5000
+                }).done(function () {
+                    if ($dataTable.fnGetData(0)) {
+                        $.get("/admin/phpswitcher?action=select", function (data) {
+                            $("#php_info_select").replaceWith(data);
+                            var $phpinfoblk = $("#php_info_blk");
+
+                            $("#php_info_select option").length
+                                ? $phpinfoblk.show() : $phpinfoblk.hide();
+                        });
+                    }
+                    
+                    $dataTable.find("span").tooltip({
+                        tooltipClass: "ui-tooltip-notice", track: true
+                    });
+                }).fail(function (jqXHR) {
+                    $dataTable.fnProcessingIndicator(false);
+                    flashMessage('error', jqXHR.responseJSON.message);
+                });
+            }
+        });
+
+        $dataTable.on("change", "#php_info_select", function () {
+            var $select = $(this);
+            $select.blur();
+
+            var phpVersionName = $(this).find("option:selected").text().trim();
+
+            $('<div id="dialog-phpinfo" style="overflow:hidden;">').append(
+                $('<iframe height="100%" scrolling="auto">')
+                    <?php if($isFpmHttpdServer): ?>
+                    .attr("src", "/shared/phpswitcher/"+$select.val())
+                    <?php else: ?>
+                    .attr("src", "/shared/phpswitcher?version_id="+$select.val())
+                    <?php endif; ?>
+            ).dialog({
+                width: "70%",
+                height: $(window).height() * 70 / 100,
+                modal: true,
+                title: sprintf("<?= tojs(tr('%%s configuration information')); ?>", phpVersionName),
+                buttons: [{
+                    text: "<?= tojs(tr('Close')); ?>", click: function () {
+                        $(this).dialog('close');
+                    }
+                }],
+                open: function() {
+                    var $dialog = $(this);
+                    $(window).on("resize scroll", function () {
+                        $dialog.dialog("option", "position", {my: "center", at: "center", of: window});
+                    });
+                },
+                close: function () {
+                    $(window).off("resize scroll");
+                    $(this).remove();
+                    $select.val("unselectable");
+                }
+            });
+
+            return false;
+        });
+
+        $("#page").on("click", "span[data-action], button", function () {
+            $("button").blur();
+
+            var $versionId = $(this).data("version-id");
+
+            switch ($(this).data("action")) {
+                case "add":
+                    createDialog("<?= tojs(tr('New PHP version')); ?>", "add").dialog("open");
+                    break;
+                case "edit":
+                    doRequest("GET", "get", {version_id: $versionId}).done(function (data) {
+                        createDialog(
+                            sprintf("<?= tojs(tr('Edit %%s version')); ?>", (data.version_version) ? "PHP " + data.version_version : "<?= tojs(tr('unknown')); ?>" + " PHP"),
+                            "edit"
+                        ).data({data: data}).dialog("open");
+                    });
+                    break;
+                case "enable":
+                    confirm(sprintf("<?= tojs(tr('Are you sure you want to activate the PHP %%s version? All domains that are set with this PHP version will be updated to use it, except those which are currently disabled.')); ?>", $(this).data("version-version")), function (ret) {
+                        if(ret) {
+                            doRequest("POST", "enable", {version_id: $versionId}).done(function (data) {
+                                $dataTable.fnDraw();
+                                flashMessage("success", data.message);
+                            });
+                        }
+                    });
+                    break;
+                case "disable":
+                    confirm(sprintf("<?= tojs(tr('Are you sure you want to disable the PHP %%s version? The PHP version of all domains using it will be temporarely resetted to the default version: %%s')); ?>", $(this).data("version-version"), "{DEFAULT_PHP_VERSION}"), function (ret) {
+                        if (ret) {
+                            doRequest("POST", "disable", {version_id: $versionId}).done(function (data) {
+                                $dataTable.fnDraw();
+                                flashMessage("success", data.message);
+                            });
+                        }
+                    });
+                    break;
+                case "delete":
+                    confirm(sprintf("<?= tojs(tr('Are you sure you want to delete the PHP %%s version? The PHP version of all domains using it will be resetted to the default version: %%s')); ?>", $(this).data("version-version"), "{DEFAULT_PHP_VERSION}"), function (ret) {
+                        if (ret) {
+                            doRequest("POST", "delete", {version_id: $versionId}).done(function (data) {
+                                $dataTable.fnDraw();
+                                flashMessage("success", data.message);
+                            });
+                        }
+                    });
+                    break;
+                <?php if(!$isFpmHttpdServer): ?>
+                case "phpinfo":
+                    confirm(sprintf("<?= tojs(tr('Are you sure you want to re-generate the static PHP info file for the PHP %%s version?')); ?>", $(this).data("version-version")), function (ret) {
+                        if (ret) {
+                            doRequest("POST", "phpinfo", {version_id: $versionId}).done(function (data) {
+                                $dataTable.fnDraw();
+                                flashMessage("success", data.message);
+                            });
+                        }
+                    });
+                    break;
+                <?php endif; ?>
+                default:
+                    alert("<?= tojs(tr('Unknown action')); ?>");
+            }
+        });
+
+        $(document).ajaxStart(function () {
+            $dataTable.fnProcessingIndicator();
+        }).ajaxStop(function () {
+            $dataTable.fnProcessingIndicator(false);
+        }).ajaxError(function (e, jqXHR, settings, exception) {
+            if (jqXHR.status === 403) {
+                window.location.replace("/index.php");
+            } else if (typeof jqXHR.responseJSON !== "undefined") {
+                flashMessage("error", jqXHR.responseJSON.message);
+            } else if (exception === "timeout") {
+                flashMessage("error", "<?= tojs(tr('Request Timeout: The server took too long to send the data.')); ?>");
+            } else {
+                flashMessage("error", "<?= tojs(tr('An unexpected error occurred.')); ?>");
+            }
+        });
+    });
+</script>
+<div class="flash_message"></div>
+<p class="hint" style="font-variant: small-caps;font-size: small;">
+    <?= tr('Through this interface, you can manage PHP versions made available for your customers.'); ?><br>
+    <?= tr('The PHP version marked as the default one cannot be updated, nor removed as this is the PHP version managed by i-MSCP core. If you want change the default PHP version for customers, you need reconfigure i-MSCP.');?>
+</p>
+<br>
+<div id="page">
+    <table class="datatable">
+        <thead>
+        <tr>
+            <th style="width:10%;"><?= tohtml(tr('Version')); ?></th>
+            <th style="width:10%;"><?= tohtml(tr('Type')); ?></th>
+            <th style="width:15%;"><?= tohtml(tr('FastCGI binary')); ?></th>
+            <th style="width:15%;"><?= tohtml(tr('FPM binary')); ?></th>
+            <th style="width:10%;"><?= tohtml(tr('FPM service name')); ?></th>
+            <th style="width:35%;"><?= tohtml(tr('Status')); ?></th>
+            <th style="width:5%;"><?= tohtml(tr('Actions')); ?></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td colspan="7" class="dataTables_empty"><?= tohtml(tr('Processing...')); ?></td>
+        </tr>
+        </tbody>
+        <tbody>
+        <tr>
+            <td colspan="7" style="background-color: #b0def5">
+                <div class="buttons" id="php_info_blk" style="font-weight: bold;float:left;display:none">
+                    <label>
+                        <span style="vertical-align: baseline"><?= tohtml(tr('PHP info')); ?></span>
+                        <select name="php_info_select" id="php_info_select"></select>
+                    </label>
+                </div>
+                <div class="buttons">
+                    <button data-action="add" 
+                            title="<?= tohtml(tr('Add new PHP version'), 'htmlAttr'); ?>"
+                    >
+                        <?= tohtml(tr('Add new PHP version')); ?>
+
+                    </button>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div id="php_dialog">
+    <form id="php_frm">
+        <div id="tabs">
+            <ul>
+                <li><a href="#tabs-1"><?= tohtml(tr('Common settings')); ?></a></li>
+                <li><a href="#tabs-2"><?= tohtml(tr('FastCGI settings')); ?></a></li>
+                <li><a href="#tabs-3"><?= tohtml(tr('PHP-FPM settings')); ?></a></li>
+            </ul>
+            <div id="tabs-1">
+                <table class="firstColFixed">
+                    <tbody>
+                    <tr>
+                        <td>
+                            <label for="version_pear_directory_path">
+                                <?= tohtml(tr('Path to PEAR directory')); ?>
+
+                            </label>
+                        </td>
+                        <td>
+                            <input class="inputTitle"
+                                   type="text"
+                                   name="version_pear_directory_path"
+                                   id="version_pear_directory_path"
+                                   maxlength="255"
+                                   value=""
+                                   placeholder="/usr/share/php"
+                                   required
+                            >
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="tabs-2">
+                <table class="firstColFixed">
+                    <tbody>
+                    <tr>
+                        <td style="width: 35%">
+                            <label for="version_cgi_binary_path">
+                                <?= tohtml(tr('Path to binary')); ?>
+
+                            </label>
+                        </td>
+                        <td>
+                            <input class="inputTitle"
+                                   type="text"
+                                   name="version_cgi_binary_path"
+                                   id="version_cgi_binary_path"
+                                   maxlength="255"
+                                   value=""
+                                   placeholder="/usr/bin/php-cgi7.4"
+                                   required
+                            >
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="tabs-3">
+                <table class="firstColFixed">
+                    <tbody>
+                    <tr>
+                        <td style="width: 35%">
+                            <label for="version_fpm_binary_path">
+                                <?= tohtml(tr('Path to binary')); ?>
+
+                            </label>
+                        </td>
+                        <td>
+                            <input class="inputTitle"
+                                   type="text"
+                                   name="version_fpm_binary_path"
+                                   id="version_fpm_binary_path"
+                                   maxlength="255"
+                                   value=""
+                                   placeholder="/usr/sbin/php-fpm7.4"
+                                   required
+                            >
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="version_fpm_config_file_path">
+                                <?= tohtml(tr('Path to configuration file')); ?>
+
+                            </label>
+                        </td>
+                        <td>
+                            <input class="inputTitle"
+                                   type="text"
+                                   name="version_fpm_config_file_path"
+                                   id="version_fpm_config_file_path"
+                                   maxlength="255"
+                                   value=""
+                                   placeholder="/etc/php/7.4/fpm/php-fpm.conf"
+                                   required
+                            >
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="version_fpm_pool_directory_path">
+                                <?= tohtml(tr('Path to pool directory')); ?>
+
+                            </label>
+                        </td>
+                        <td>
+                            <input class="inputTitle"
+                                   type="text"
+                                   name="version_fpm_pool_directory_path"
+                                   id="version_fpm_pool_directory_path"
+                                   maxlength="255"
+                                   value=""
+                                   placeholder="/etc/php/7.4/fpm/pool.d"
+                                   required
+                            >
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <input type="hidden" name="version_id" id="version_id" value="">
+    </form>
+</div>

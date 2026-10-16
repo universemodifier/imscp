@@ -846,7 +846,7 @@ sub _enabledPhpModules
 {
     my ( $dir ) = @_;
 
-    return () unless defined $dir && opendir my $dh, $dir;
+    return () unless defined $dir && opendir( my $dh, $dir );
     my @names = map { s/\.load\z//r } grep { /\Aphp.*\.load\z/ } readdir $dh;
     closedir $dh;
     @names;
@@ -862,7 +862,7 @@ sub _phpFpmCgiConfs
 {
     my ( $dir ) = @_;
 
-    return () unless defined $dir && opendir my $dh, $dir;
+    return () unless defined $dir && opendir( my $dh, $dir );
     my @names = grep { /\Aphp\d.*-(?:cgi|fpm)\.conf\z/ } readdir $dh;
     closedir $dh;
     @names;

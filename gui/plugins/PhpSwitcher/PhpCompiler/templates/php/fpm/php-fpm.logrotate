@@ -1,0 +1,11 @@
+{PHP_FPM_LOG_DIR}/{PHP_FPM_LOG_FILE} {
+	rotate 12
+	weekly
+	missingok
+	notifempty
+	compress
+	delaycompress
+	postrotate
+		{PHP_FPM_LIB_DIR}/{PHP_FPM_REOPENLOGS_SCRIPT}
+	endscript
+}

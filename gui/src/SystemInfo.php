@@ -498,9 +498,15 @@ class SystemInfo
 
         if (empty($this->_error)) {
             foreach (explode("\n", $ramRaw) as $ri) {
-                list($type, $kb) = preg_split(
-                    '/\s+/', $line = str_replace(':', '', $ri), 3
-                );
+                $parts = preg_split('/\s+/', str_replace(':', '', $ri), 3);
+
+                // /proc/meminfo ends with a blank line. PHP 8 warns when
+                // that line is unpacked into two variables.
+                if (count($parts) < 2) {
+                    continue;
+                }
+
+                list($type, $kb) = $parts;
 
                 switch ($type) {
                     case 'MemTotal':

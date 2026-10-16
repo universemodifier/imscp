@@ -514,6 +514,32 @@ class TemplateEngine
     }
 
     /**
+     * Coerce a template value to a string.
+     *
+     * PHP 8 rejects non-strings in substr_replace(). Counts and other
+     * numeric placeholders are stored as integers.
+     *
+     * @param mixed $value
+     * @return string
+     */
+    protected function replacementValue($value)
+    {
+        if (is_string($value)) {
+            return $value;
+        }
+
+        if (is_int($value) || is_float($value)) {
+            return (string)$value;
+        }
+
+        if (is_bool($value)) {
+            return $value ? '1' : '';
+        }
+
+        return '';
+    }
+
+    /**
      * @param  $data
      * @return mixed
      */
@@ -549,7 +575,7 @@ class TemplateEngine
                             if (isset($this->namespace[$varName])) {
                                 $data = substr_replace(
                                     $data,
-                                    $this->namespace[$varName],
+                                    $this->replacementValue($this->namespace[$varName]),
                                     $curlB,
                                     $curlE - $curlB + 1
                                 );
@@ -559,7 +585,7 @@ class TemplateEngine
                             } elseif (isset($this->dtplData[$varName])) {
                                 $data = substr_replace(
                                     $data,
-                                    $this->dtplData[$varName],
+                                    $this->replacementValue($this->dtplData[$varName]),
                                     $curlB,
                                     $curlE - $curlB + 1
                                 );

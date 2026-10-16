@@ -1,0 +1,368 @@
+# i-MSCP PhpSwitcher plugin.
+# Copyright (C) 2014-2019 Laurent Declercq - All rights reserved
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Translators:
+# i-MSCP <team@i-mscp.net>, 2015
+msgid ""
+msgstr ""
+"Project-Id-Version: PhpSwitcher\n"
+"Report-Msgid-Bugs-To: l.declercq@nuxwin.com\n"
+"POT-Creation-Date: 2019-09-27 02:23+0200\n"
+"PO-Revision-Date: 2015-05-28 11:56+0000\n"
+"Last-Translator: i-MSCP <team@i-mscp.net>\n"
+"Language-Team: Swedish (Sweden) <team@i-mscp.net>\n"
+"Language: sv_SE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: themes/default/view/client/page.phtml:70
+#: themes/default/view/admin/page.phtml:160
+#, fuzzy, php-format
+msgid "%%s configuration information"
+msgstr "Sökvägen till konfigurationsfilen"
+
+#: themes/default/view/admin/page.phtml:279
+msgid "Actions"
+msgstr "Åtgärder"
+
+#: frontend/admin/phpswitcher.php:598
+#, fuzzy
+msgid "Activate this PHP version"
+msgstr "Inaktivera detta PHP version"
+
+#: themes/default/view/admin/page.phtml:298
+#: themes/default/view/admin/page.phtml:300
+msgid "Add new PHP version"
+msgstr "Lägg till ny PHP-version"
+
+#: frontend/admin/phpswitcher.php:856
+msgid "Admin / Settings / PHP Switcher"
+msgstr "Admin / Inställningar / PHP Switcher"
+
+#: frontend/admin/phpswitcher.php:111 frontend/admin/phpswitcher.php:203
+msgid "All settings are required."
+msgstr "Alla inställningar krävs."
+
+#: themes/default/view/admin/page.phtml:258
+msgid "An unexpected error occurred."
+msgstr "Ett oväntat fel inträffade."
+
+#: themes/default/view/admin/page.phtml:200
+#, fuzzy, php-format
+msgid ""
+"Are you sure you want to activate the PHP %%s version? All domains that are "
+"set with this PHP version will be updated to use it, except those which are "
+"currently disabled."
+msgstr ""
+"Är du säker på att du vill inaktivera den här PHP-versionen? Var medveten om "
+"att PHP-versionen för kunder som använder den versionen kommer att "
+"returneras till standardversionen av PHP så länge den här versionen kommer "
+"att inaktiveras."
+
+#: themes/default/view/admin/page.phtml:220
+#, fuzzy, php-format
+msgid ""
+"Are you sure you want to delete the PHP %%s version? The PHP version of all "
+"domains using it will be resetted to the default version: %%s"
+msgstr ""
+"Är du säker på att du vill inaktivera den här PHP-versionen? Var medveten om "
+"att PHP-versionen för kunder som använder den versionen kommer att "
+"returneras till standardversionen av PHP så länge den här versionen kommer "
+"att inaktiveras."
+
+#: themes/default/view/admin/page.phtml:210
+#, fuzzy, php-format
+msgid ""
+"Are you sure you want to disable the PHP %%s version? The PHP version of all "
+"domains using it will be temporarely resetted to the default version: %%s"
+msgstr ""
+"Är du säker på att du vill inaktivera den här PHP-versionen? Var medveten om "
+"att PHP-versionen för kunder som använder den versionen kommer att "
+"returneras till standardversionen av PHP så länge den här versionen kommer "
+"att inaktiveras."
+
+#: themes/default/view/admin/page.phtml:231
+#, fuzzy, php-format
+msgid ""
+"Are you sure you want to re-generate the static PHP info file for the PHP "
+"%%s version?"
+msgstr "Är du säker på att du vill radera denna PHP-version?"
+
+#: frontend/client/phpswitcher.php:146 frontend/client/phpswitcher.php:162
+#: frontend/client/phpswitcher.php:182 frontend/client/phpswitcher.php:248
+#: frontend/client/phpswitcher.php:255 frontend/admin/phpswitcher.php:57
+#: frontend/admin/phpswitcher.php:69 frontend/admin/phpswitcher.php:94
+#: frontend/admin/phpswitcher.php:185 frontend/admin/phpswitcher.php:223
+#: frontend/admin/phpswitcher.php:235 frontend/admin/phpswitcher.php:302
+#: frontend/admin/phpswitcher.php:322 frontend/admin/phpswitcher.php:351
+#: frontend/admin/phpswitcher.php:371 frontend/admin/phpswitcher.php:400
+#: frontend/admin/phpswitcher.php:419 frontend/admin/phpswitcher.php:453
+#: frontend/admin/phpswitcher.php:475 frontend/admin/phpswitcher.php:836
+msgid "Bad request."
+msgstr "Dålig förfrågan."
+
+#: themes/default/view/admin/page.phtml:66
+msgid "Cancel"
+msgstr "Annullera"
+
+#: frontend/client/phpswitcher.php:461
+msgid "Client / Domains / PHP Switcher"
+msgstr "Client / Domäner / PHP Switcher' => 'Kund / Domäner / PHP Switcher"
+
+#: themes/default/view/client/page.phtml:72
+#: themes/default/view/admin/page.phtml:162
+msgid "Close"
+msgstr "Stänga"
+
+#: themes/default/view/admin/page.phtml:313
+msgid "Common settings"
+msgstr "Allmänna inställningar"
+
+#: frontend/client/phpswitcher.php:305 frontend/admin/phpswitcher.php:75
+#: frontend/admin/phpswitcher.php:165 frontend/admin/phpswitcher.php:288
+#: frontend/admin/phpswitcher.php:337 frontend/admin/phpswitcher.php:386
+#: frontend/admin/phpswitcher.php:434 frontend/admin/phpswitcher.php:496
+#: frontend/admin/phpswitcher.php:748
+#, php-format
+msgid "Couldn't process the request: %s"
+msgstr ""
+
+#: frontend/admin/phpswitcher.php:599
+msgid "Deactivate this PHP version"
+msgstr "Inaktivera detta PHP version"
+
+#: frontend/admin/phpswitcher.php:601
+msgid "Delete this PHP version"
+msgstr "Radera denna PHP-version"
+
+#: themes/default/view/client/page.phtml:109
+msgid "Domain name"
+msgstr "Domain namn"
+
+#: themes/default/view/admin/page.phtml:194
+#, php-format
+msgid "Edit %%s version"
+msgstr "Redigera %%s version"
+
+#: frontend/admin/phpswitcher.php:600
+msgid "Edit this PHP version"
+msgstr "Redigera denna PHP-version"
+
+#: themes/default/view/admin/page.phtml:276
+#, fuzzy
+msgid "FPM binary"
+msgstr "PHP-FPM binär"
+
+#: themes/default/view/admin/page.phtml:277
+msgid "FPM service name"
+msgstr ""
+
+#: themes/default/view/admin/page.phtml:275
+#, fuzzy
+msgid "FastCGI binary"
+msgstr "PHP FastCGI binär"
+
+#: themes/default/view/admin/page.phtml:314
+msgid "FastCGI settings"
+msgstr "FastCGI inställningar"
+
+#: themes/default/view/admin/page.phtml:189
+msgid "New PHP version"
+msgstr "Ny PHP version"
+
+#: frontend/client/phpswitcher.php:471
+msgid "Note that forwarded domains are ignored."
+msgstr ""
+
+#: frontend/admin/phpswitcher.php:159 frontend/admin/phpswitcher.php:283
+msgid ""
+"One or more of given paths are already set for another PHP version. You "
+"cannot register multiple PHP versions with the same paths, except for the "
+"PEAR directory path."
+msgstr ""
+
+#: PhpSwitcher.php:180 PhpSwitcher.php:193
+msgid "PHP Switcher"
+msgstr "PHP Switcher"
+
+#: themes/default/view/client/page.phtml:148
+#: themes/default/view/admin/page.phtml:292
+msgid "PHP info"
+msgstr "PHP info"
+
+#: themes/default/view/client/page.phtml:111
+msgid "PHP version"
+msgstr "PHP version"
+
+#: frontend/admin/phpswitcher.php:273
+msgid ""
+"PHP version has been updated but changes won't be taken into consideration "
+"till its reactivation."
+msgstr ""
+
+#: frontend/admin/phpswitcher.php:329
+#, fuzzy
+msgid "PHP version will be activated."
+msgstr "PHP versionen kommer att återaktiveras."
+
+#: frontend/admin/phpswitcher.php:149
+#, fuzzy
+msgid "PHP version will be added."
+msgstr "PHP version kommer att uppdateras. Var tålmodig."
+
+#: frontend/admin/phpswitcher.php:378
+#, fuzzy
+msgid "PHP version will be deactivated."
+msgstr "PHP versionen kommer att inaktiveras."
+
+#: frontend/admin/phpswitcher.php:426
+#, fuzzy
+msgid "PHP version will be deleted."
+msgstr "PHP version kommer att uppdateras. Var tålmodig."
+
+#: frontend/admin/phpswitcher.php:269
+#, fuzzy
+msgid "PHP version will be updated."
+msgstr "PHP version kommer att uppdateras. Var tålmodig."
+
+#: frontend/client/phpswitcher.php:296
+msgid "PHP version will be updated. Please be patient."
+msgstr "PHP version kommer att uppdateras. Var tålmodig."
+
+#: themes/default/view/admin/page.phtml:315
+msgid "PHP-FPM settings"
+msgstr "PHP-FPM inställningar"
+
+#: frontend/admin/phpswitcher.php:632
+msgid "Packaged"
+msgstr ""
+
+#: themes/default/view/admin/page.phtml:323
+msgid "Path to PEAR directory"
+msgstr "Path to PEAR katalog"
+
+#: themes/default/view/admin/page.phtml:348
+#: themes/default/view/admin/page.phtml:373
+msgid "Path to binary"
+msgstr "Path to binär"
+
+#: themes/default/view/admin/page.phtml:392
+msgid "Path to configuration file"
+msgstr "Sökvägen till konfigurationsfilen"
+
+#: themes/default/view/admin/page.phtml:411
+msgid "Path to pool directory"
+msgstr "Path to pool katalog"
+
+#: themes/default/view/admin/page.phtml:284
+msgid "Processing..."
+msgstr "Bearbetning..."
+
+#: frontend/admin/phpswitcher.php:603
+#, fuzzy
+msgid "Regenerate static PHP info file for this PHP version"
+msgstr "Aktivera den här versionen av PHP"
+
+#: frontend/admin/phpswitcher.php:623
+#, fuzzy
+msgid "Regeneration of static PHP info file in progress..."
+msgstr "Re-generera statiska filer phpinfo."
+
+#: themes/default/view/admin/page.phtml:256
+msgid "Request Timeout: The server took too long to send the data."
+msgstr "Request Timeout: Servern tog för lång tid att skicka data."
+
+#: themes/default/view/admin/page.phtml:56
+msgid "Save"
+msgstr "Spara"
+
+#: frontend/admin/phpswitcher.php:795 themes/default/view/client/page.phtml:151
+msgid "Select a version to view its configuration"
+msgstr ""
+
+#: frontend/admin/phpswitcher.php:488
+#, fuzzy
+msgid "Static PHP info file will be regenerated."
+msgstr "Statiska phpinfo-filer kommer att regenereras."
+
+#: themes/default/view/client/page.phtml:112
+#: themes/default/view/admin/page.phtml:278
+msgid "Status"
+msgstr "Status"
+
+#: themes/default/view/admin/page.phtml:266
+msgid ""
+"The PHP version marked as the default one cannot be updated, nor removed as "
+"this is the PHP version managed by i-MSCP core. If you want change the "
+"default PHP version for customers, you need reconfigure i-MSCP."
+msgstr ""
+
+#: PhpSwitcher.php:152
+#, fuzzy
+msgid ""
+"The PhpSwitcher plugin requires the Fcgid or the PHP-FPM Apache2 httpd "
+"server."
+msgstr "Denna plugin kräver Fcgid eller PHP-FPM Apache2 httpd-servern."
+
+#: frontend/client/phpswitcher.php:464
+#, fuzzy
+msgid ""
+"Through this interface, you can change the PHP version for all your domains."
+msgstr "Nedan kan du ändra PHP-versionen för alla dina domäner."
+
+#: frontend/client/phpswitcher.php:468
+#, fuzzy
+msgid ""
+"Through this interface, you can change the PHP version for each of your "
+"domains, including subdomains."
+msgstr ""
+"Nedan kan du ändra PHP-versionen för var och en av dina domäner, inklusive "
+"underdomäner."
+
+#: frontend/client/phpswitcher.php:470
+#, fuzzy
+msgid ""
+"Through this interface, you can change the PHP version for each of your "
+"domains."
+msgstr "Nedan kan du ändra PHP-versionen för var och en av dina domäner."
+
+#: themes/default/view/admin/page.phtml:265
+#, fuzzy
+msgid ""
+"Through this interface, you can manage PHP versions made available for your "
+"customers."
+msgstr "Nedan kan du ändra PHP-versionen för alla dina domäner."
+
+#: themes/default/view/admin/page.phtml:274
+msgid "Type"
+msgstr ""
+
+#: PhpSwitcher.php:140
+msgid "Ubuntu Trusty Thar (14.04) isn't supported by the PhpSwitcher plugin."
+msgstr ""
+
+#: themes/default/view/admin/page.phtml:242
+msgid "Unknown action"
+msgstr "Okänd åtgärd"
+
+#: themes/default/view/admin/page.phtml:273
+#, fuzzy
+msgid "Version"
+msgstr "PHP version"
+
+#: frontend/admin/phpswitcher.php:618
+#, fuzzy
+msgid "default"
+msgstr "(Standard)"
+
+#: frontend/admin/phpswitcher.php:645 frontend/admin/phpswitcher.php:664
+#: frontend/admin/phpswitcher.php:669 frontend/admin/phpswitcher.php:737
+msgid "n/a"
+msgstr "n/a"
+
+#: frontend/admin/phpswitcher.php:651 themes/default/view/admin/page.phtml:194
+msgid "unknown"
+msgstr "okänd"

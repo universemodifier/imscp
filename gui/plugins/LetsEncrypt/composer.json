@@ -1,0 +1,19 @@
+{
+  "name": "imscp/imscp-letsencrypt",
+  "description": "i-MSCP Let's Encrypt plugin",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Laurent Declercq",
+      "email": "l.declercq@nuxwin.com"
+    }
+  ],
+  "require-dev": {
+    "phpspec/phpspec": "^4.0"
+  },
+  "config": {
+    "bin-dir": "bin"
+  },
+  "autoload": {"psr-0": {"": "frontend/library"}}
+}

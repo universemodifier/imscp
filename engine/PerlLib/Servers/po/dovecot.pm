@@ -321,14 +321,17 @@ sub setEnginePermissions
             mode  => '0640'
         }
     );
-    $rs ||= setRights(
-        "$self->{'config'}->{'DOVECOT_CONF_DIR'}/dovecot-sql.conf",
-        {
-            user  => $::imscpConfig{'ROOT_USER'},
-            group => $self->{'mta'}->{'config'}->{'MTA_MAILBOX_GID_NAME'},
-            mode  => '0640'
-        }
-    );
+    # Dovecot 2.4 keeps SQL inside the main configuration file.
+    if ( -f "$self->{'config'}->{'DOVECOT_CONF_DIR'}/dovecot-sql.conf" ) {
+        $rs ||= setRights(
+            "$self->{'config'}->{'DOVECOT_CONF_DIR'}/dovecot-sql.conf",
+            {
+                user  => $::imscpConfig{'ROOT_USER'},
+                group => $self->{'mta'}->{'config'}->{'MTA_MAILBOX_GID_NAME'},
+                mode  => '0640'
+            }
+        );
+    }
     $rs ||= setRights(
         "$::imscpConfig{'ENGINE_ROOT_DIR'}/quota/imscp-dovecot-quota.sh",
         {

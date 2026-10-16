@@ -404,6 +404,17 @@ sub _setupHostname
     my $hostname = ::setupGetQuestion( 'SERVER_HOSTNAME' );
     my $lanIP = ::setupGetQuestion( 'BASE_SERVER_IP' );
 
+    # 0.0.0.0 keeps the primary address dynamic. It must not be written
+    # into /etc/hosts, or the hostname resolves to nowhere.
+    if ( $lanIP eq '0.0.0.0' ) {
+        my ( $addr ) = grep {
+            isValidIpAddr(
+                $_, qr/(?:PRIVATE|UNIQUE-LOCAL-UNICAST|PUBLIC|GLOBAL-UNICAST)/
+            )
+        } iMSCP::Net->getInstance()->getAddresses();
+        $lanIP = $addr if defined $addr;
+    }
+
     my $rs = $self->{'events'}->trigger(
         'beforeSetupServerHostname', \$hostname, \$lanIP
     );

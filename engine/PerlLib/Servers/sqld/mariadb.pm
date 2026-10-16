@@ -26,6 +26,7 @@ package Servers::sqld::mariadb;
 use strict;
 use warnings;
 use Class::Autouse qw/ :nostat Servers::sqld::mariadb::installer Servers::sqld::mariadb::uninstaller /;
+use Digest::SHA qw/ sha1 sha1_hex /;
 use iMSCP::Boolean;
 use iMSCP::Service;
 use iMSCP::Database;
@@ -128,13 +129,15 @@ sub createUser
     eval {
         my $dbh = iMSCP::Database->factory()->getRawDb();
         # MariaDB 10.11 and 11.8 can default new accounts to a plugin that
-        # PHP's mysqlnd cannot use. Pin the panel accounts to the native plugin.
+        # PHP's mysqlnd cannot use. Pin the panel accounts to the native
+        # plugin. USING accepts the hash string, not an SQL expression.
+        my $nativeHash = '*' . uc( sha1_hex( sha1( $password )));
         $dbh->do(
-            q{CREATE USER ?@? IDENTIFIED VIA mysql_native_password USING CONCAT('*', UPPER(SHA1(UNHEX(SHA1(?)))))},
+            'CREATE USER ?@? IDENTIFIED VIA mysql_native_password USING ?',
             undef,
             $user,
             $host,
-            $password
+            $nativeHash
         );
     };
     !$@ or die( sprintf(

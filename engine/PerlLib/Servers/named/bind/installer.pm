@@ -187,6 +187,13 @@ sub _init
             if -f '/etc/default/named';
     }
 
+    # Debian 13 moved the zone compiler from /usr/sbin to /usr/bin.
+    if ( !-x ( $self->{'config'}->{'NAMED_COMPILEZONE'} // '' )
+        && -x '/usr/bin/named-compilezone'
+    ) {
+        $self->{'config'}->{'NAMED_COMPILEZONE'} = '/usr/bin/named-compilezone';
+    }
+
     $self;
 }
 
@@ -714,6 +721,17 @@ sub _buildConf
 
         unless ( -f "$self->{'config'}->{'BIND_CONF_DIR'}/bind.keys" ) {
             $tplContent =~ s%include\s+\Q"$self->{'config'}->{'BIND_CONF_DIR'}\E/bind.keys";\n%%;
+        }
+
+        # Debian 13 dropped the packaged default-zones file. Recursion still
+        # needs the root hint zone, which that release ships separately.
+        my $defaultZones = "$self->{'config'}->{'BIND_CONF_DIR'}/named.conf.default-zones";
+        my $rootHints = "$self->{'config'}->{'BIND_CONF_DIR'}/named.conf.root-hints";
+        unless ( -f $defaultZones ) {
+            $tplContent =~ s%include\s+"\Q$defaultZones\E";\n%%;
+            if ( -f $rootHints && $tplContent !~ /named\.conf\.root-hints/ ) {
+                $tplContent =~ s%(include\s+"\Q$self->{'config'}->{'BIND_CONF_DIR'}/named.conf.local\E";)%$1\ninclude "$rootHints";%;
+            }
         }
 
         $rs = $self->{'events'}->trigger(

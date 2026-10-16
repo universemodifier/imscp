@@ -251,6 +251,8 @@ sub dpkgPostInvokeTasks
 {
     my ( $self ) = @_;
 
+    $self->_resolvePhpFpmBin();
+
     if ( -f '/usr/local/sbin/imscp_panel' ) {
         unless ( -f $self->{'config'}->{'PHP_FPM_BIN_PATH'} ) {
             # Cover case where administrator removed the package
@@ -1895,9 +1897,51 @@ sub _makeDirs
 
 =cut
 
+sub _resolvePhpFpmBin
+{
+    my ( $self ) = @_;
+
+    my $configured = $self->{'config'}->{'PHP_FPM_BIN_PATH'} // '';
+    return $configured if length $configured && -x $configured;
+
+    my $version = '';
+    if ( main->can( 'setupGetQuestion' ) ) {
+        ( $version ) = ::setupGetQuestion( 'PHP_SERVER' ) =~ /^php(.+)\z/;
+    }
+
+    my @candidates = glob '/usr/sbin/php-fpm[0-9]*';
+    if ( length $version ) {
+        @candidates = (
+            "/usr/sbin/php-fpm$version",
+            grep { $_ ne "/usr/sbin/php-fpm$version" } @candidates
+        );
+    }
+
+    for my $candidate ( @candidates ) {
+        next unless -x $candidate;
+
+        $self->{'config'}->{'PHP_FPM_BIN_PATH'} = $candidate;
+        my $dataFile = "$self->{'cfgDir'}/frontend.data";
+        if ( -f $dataFile ) {
+            my $file = iMSCP::File->new( filename => $dataFile );
+            my $content = $file->get();
+            if ( defined $content ) {
+                $content =~ s/^PHP_FPM_BIN_PATH\s*=.*$/PHP_FPM_BIN_PATH = $candidate/m;
+                $file->set( $content );
+                $file->save();
+            }
+        }
+        return $candidate;
+    }
+
+    $configured;
+}
+
 sub _copyPhpBinary
 {
     my ( $self ) = @_;
+
+    $self->_resolvePhpFpmBin();
 
     unless ( length $self->{'config'}->{'PHP_FPM_BIN_PATH'} ) {
         error( "PHP 'PHP_FPM_BIN_PATH' configuration parameter is not set." );

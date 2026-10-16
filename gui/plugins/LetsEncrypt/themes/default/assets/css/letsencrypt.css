@@ -1,0 +1,11 @@
+/**
+ * i-MSCP LetsEncrypt plugin
+ *
+ * @author        Laurent Declercq <l.declercq@nuxwin.com>
+ * @copyright (C) 2016-2018 Laurent Declercq <l.declercq@nuxwin.com>
+ * @license       i-MSCP License <http://www.i-mscp.net/license-agreement.html>
+ */
+
+.body .letsencrypt {
+    background-image: url(/LetsEncrypt/themes/default/assets/images/letsencrypt_25x25.png);
+}

@@ -122,8 +122,7 @@ function deleteService($serviceName)
         unset($dbConfig[$serviceName]);
 
         // Remove cache entry for this service if any
-        $identifier = Services::class
-            . '_' . preg_replace('/[^a-zA-Z0-9_]/', '_', $serviceName);
+        $identifier = Services::cacheId($serviceName);
         /** @var Zend_Cache_Core $cache */
         $cache = Registry::get('iMSCP_Application')->getCache();
         $cache->remove($identifier);
@@ -219,9 +218,7 @@ function addOrUpdateServices($mode = 'add')
 
                 if (!$show) {
                     // Remove cache entry for this service if any
-                    $identifier = Services::class
-                        . '_'
-                        . preg_replace('/[^a-zA-Z0-9_]/', '_', $dbServiceName);
+                    $identifier = Services::cacheId($dbServiceName);
                     /** @var Zend_Cache_Core $cache */
                     $cache = Registry::get('iMSCP_Application')->getCache();
                     $cache->remove($identifier);

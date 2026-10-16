@@ -1,0 +1,8 @@
+- Add a specific pending time to cover cases where the rate limits were reached (it is useless to perform new attemps
+  when not necessary, eg, case of a limit which will not be release until 7 days)
+- Add support for CSR
+- Avoid Certbot client usage. See
+    - https://metacpan.org/release/Protocol-ACME
+    - https://metacpan.org/pod/Net::ACME
+    - https://metacpan.org/pod/OpenCA::OpenSSL
+- Implement ACME v2

@@ -82,6 +82,24 @@ class Services implements iterator, countable
     }
 
     /**
+     * Cache id for a service status.
+     *
+     * Zend_Cache accepts only [a-zA-Z0-9_]. The namespace separator in the
+     * class name has to be replaced.
+     *
+     * @param string $serviceName
+     * @return string
+     */
+    public static function cacheId(string $serviceName): string
+    {
+        return preg_replace(
+            '/[^a-zA-Z0-9_]/',
+            '_',
+            static::class . '_' . $serviceName
+        );
+    }
+
+    /**
      * Get service name.
      *
      * @return string
@@ -119,9 +137,7 @@ class Services implements iterator, countable
      */
     private function getStatus(): bool
     {
-        $identifier = static::class
-            . '_'
-            . preg_replace('/[^a-zA-Z0-9_]/', '_', $this->key());
+        $identifier = self::cacheId($this->key());
 
         if ($this->refresh || !($this->cache->test($identifier))) {
             $ip = $this->getIp();

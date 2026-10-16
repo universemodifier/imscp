@@ -1,0 +1,164 @@
+<?php
+/**@noinspection
+ * PhpUnhandledExceptionInspection
+ * PhpDocMissingThrowsInspection 
+ */
+
+$phpinfo = iMSCP_Registry::get('pluginManager')->pluginGet('PhpSwitcher')->getConfigParam('phpinfo', false);
+$isFpmHttpdServer = iMSCP_Registry::get('config')['HTTPD_SERVER'] == 'apache_php_fpm';
+?>
+<script>
+    $(function () {
+        function flashMessage(type, message) {
+            $(".flash_message").remove();
+            $("<div>", {
+                "class": "flash_message " + type,
+                "html": $.parseHTML(message),
+                "hide": true
+            }).prependTo(".body").trigger('message_timeout');
+        }
+
+        var $dataTable = $(".datatable").dataTable({
+            language: <?= getDataTablesPluginTranslations(); ?>,
+            displayLength: 10,
+            stateSave: true,
+            pagingType: "simple",
+            columnDefs: [
+                { sortable: false, searchable: false, targets: [1, 2] }
+            ]
+        });
+
+        $dataTable.on("change", "select[name=version_id]", function () {
+            var $select = $(this);
+            var data = $select.serializeArray();
+            data.push({name:"domain_id", value:$select.data('domain-id')});
+            data.push({name:"domain_type", value:$select.data('domain-type')});
+            data.push({name:"domain_name", value:$select.data('domain-name')});
+
+            $.post("/client/phpswitcher", data, null, 'json').done(function () {
+                window.location.href = "/client/phpswitcher";
+            }).fail(function (jqXHR) {
+                if(jqXHR.status === 403) {
+                    window.location.replace("/index.php");
+                } else {
+                    $select.val($select.data('current-version-id'));
+                    flashMessage('error', jqXHR.responseJSON.message);
+                }
+            });
+
+            return false;
+        });
+
+        <?php if($phpinfo):?>
+        $dataTable.on("change", "#php_info_select", function () {
+            var $select = $(this);
+            $select.blur();
+
+            var phpVersionName = $(this).find("option:selected").text().trim();
+
+            $('<div id="dialog-phpinfo" style="overflow:hidden;">').append(
+                $('<iframe height="100%" scrolling="auto">')
+                    <?php if($isFpmHttpdServer): ?>
+                    .attr("src", "/shared/phpswitcher/"+$select.val())
+                    <?php else: ?>
+                    .attr("src", "/shared/phpswitcher?version_id="+$select.val())
+                    <?php endif; ?>
+            ).dialog({
+                width: "70%",
+                height: $(window).height() * 70 / 100,
+                modal: true,
+                title: sprintf("<?= tojs(tr('%%s configuration information')); ?>", phpVersionName),
+                buttons: [{
+                    text: "<?= tojs(tr('Close')); ?>", click: function () {
+                        $(this).dialog('close');
+                    }
+                }],
+                open: function() {
+                    var $dialog = $(this);
+                    $(window).on("resize scroll", function () {
+                        $dialog.dialog(
+                            "option",
+                            "position",
+                            {my: "center", at: "center", of: window}
+                        );
+                    });
+                },
+                close: function () {
+                    $(window).off("resize scroll");
+                    $(this).remove();
+                    $select.val("unselectable");
+                }
+            });
+
+            return false;
+        });
+        <?php endif;?>
+    });
+</script>
+
+<div class="flash_message" style="display: none;"></div>
+<p class="hint" style="font-variant: small-caps;font-size: small;">
+    {TR_HINT}
+</p>
+<br>
+<form>
+    <table class="datatable">
+        <thead>
+        <tr>
+            <!-- BDP: thead_domain_name -->
+            <th><?= tohtml(tr('Domain name')); ?></th>
+            <!-- EDP: thead_domain_name -->
+            <th><?= tohtml(tr('PHP version')); ?></th>
+            <th><?= tohtml(tr('Status')); ?></th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- BDP: domain_php_version -->
+        <tr>
+            <!-- BDP: tbody_domain_name -->
+            <td>{DOMAIN_NAME_UNICODE}</td>
+            <!-- EDP: tbody_domain_name -->
+            <td>
+                <label>
+                    <select name="version_id"
+                            data-domain-id="{DOMAIN_ID}"
+                            data-domain-name="{DOMAIN_NAME}"
+                            data-domain-type="{DOMAIN_TYPE}"
+                            data-current-version-id="{CURRENT_PHP_VERSION_ID}"
+                            {PHP_VERSION_DISABLED}
+                    >
+                        <!-- BDP: php_version_option -->
+                        <option value="{PHP_VERSION_ID}"{PHP_VERSION_SELECTED}>{PHP_VERSION}</option>
+                        <!-- EDP: php_version_option -->
+                    </select>
+                </label>
+            </td>
+            <td>
+                {DOMAIN_STATUS}
+            </td>
+        </tr>
+        <!-- EDP: domain_php_version -->
+        </tbody>
+        <?php if($phpinfo): ?>
+        <tbody>
+        <tr>
+            <td colspan="3" style="background-color: #b0def5">
+                <div class="buttons" style="font-weight: bold;float:left;">
+                    <label title="">
+                        <span style="vertical-align: baseline"><?= tohtml(tr('PHP info')); ?></span>
+                        <select name="php_info" id="php_info_select" style="vertical-align: baseline">
+                            <option value="unselectable" style="display:none" disabled selected>
+                                <?= tr("Select a version to view its configuration");?>
+                            </option>
+                            <!-- BDP: php_info_option -->
+                            <option value="{PHP_VERSION_ID}">{PHP_VERSION}</option>
+                            <!-- EDP: php_info_option -->
+                        </select>
+                    </label>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+        <?php endif;?>
+    </table>
+</form>

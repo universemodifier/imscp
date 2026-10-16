@@ -1,0 +1,27 @@
+#!/bin/bash
+# i-MSCP PhpSwitcher plugin
+#
+# @author        Laurent Declercq <l.declercq@nuxwin.com>
+# @copyright (C) 2014-2019 Laurent Declercq <l.declercq@nuxwin.com>
+# @license       i-MSCP License <https://www.i-mscp.net/license-agreement.html>
+
+# Setup Ondřej Surý APT repository before logging into chroot via login/execute
+
+# Add Ondřej Surý PHP repository in the /etc/apt/sources.list
+/bin/cat >> "/etc/apt/sources.list" <<EOF
+deb https://packages.sury.org/php/ $DISTRIBUTION main
+EOF
+
+# Download APT KEY for Ondřej Surý PHP repository
+/usr/bin/wget --quiet --prefer-family=IPv4 --timeout=30 -O /tmp/ondrej-apt-key \
+  https://packages.sury.org/php/apt.gpg
+
+# Add APT KEY for Ondřej Surý PHP repository
+/usr/bin/apt-key add /tmp/ondrej-apt-key
+
+# Remove temporary file for APT KEY for Ondřej Surý PHP repository
+/bin/rm -f /tmp/ondrej-apt-key
+
+# Update APT indexes and make sure the system is up-to-date
+/usr/bin/apt-get update
+/usr/bin/apt-get -y --auto-remove --no-install-recommends dist-upgrade

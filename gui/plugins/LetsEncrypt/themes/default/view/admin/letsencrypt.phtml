@@ -1,0 +1,169 @@
+<? /** @noinspection PhpUnhandledExceptionInspection */ ?>
+<link href="/LetsEncrypt/themes/default/assets/css/letsencrypt.css" rel="stylesheet">
+<script>
+    $(function () {
+        var postURL = '/admin/letsencrypt';
+        var forbiddenRedirectURL = '/index.php';
+
+        $("#ssl_datatable").dataTable({
+            language: <?= getDataTablesPluginTranslations(); ?>,
+            displayLength: 10,
+            stateSave: true,
+            pagingType: "simple"
+        }).on("click", "button", function () {
+            var $button = $(this);
+            var action = $(this).data("action") || "unknown";
+            var $form = $(this).closest("form");
+            $button.blur();
+
+            if (action === "settings") {
+                if ($button.data('dialog')) {
+                    $button.data('dialog').dialog('open');
+                } else {
+                    var $certActionButton = $form.find('button:first');
+                    var dnsNamesEditMode = $certActionButton.data("action") !== 'toadd' || parseInt($certActionButton.data("error"));
+                    var buttons = [{
+                        text: dnsNamesEditMode ? "<?= tojs(tr('Cancel')); ?>" : "<?= tojs(tr('Ok')); ?>",
+                        click: function () {
+                            $(this).dialog("close");
+                        }
+                    }];
+
+                    if (dnsNamesEditMode) {
+                        buttons.unshift({
+                            text: "<?= tojs(tr('Apply changes')); ?>",
+                            style: "display:none",
+                            class: "apply_changes_button",
+                            click: function () {
+                                $(this).off("dialogclose").dialog("close");
+                                $certActionButton.data('confirm', '').trigger("click");
+                            }
+                        });
+                    }
+
+                    $button.data('dialog', $form.find(".settings_dialog").dialog({
+                        hide: "blind",
+                        show: "slide",
+                        focus: false,
+                        autoOpen: true,
+                        width: 750,
+                        height: 450,
+                        modal: true,
+                        title: "<?= tojs(tr('DNS names')); ?>",
+                        buttons: buttons,
+                        create: function () {
+                            if (!dnsNamesEditMode) return;
+                            initDialogForDNSnamesEdit($(this));
+                        },
+                        open: function () {
+                            $(window).on("resize scroll", {dialog: $(this) }, function (e) {
+                                e.data.dialog.dialog("option", "position", {my: "center", at: "center", of: window});
+                            });
+                        },
+                        close: function (e) {
+                            e.preventDefault();
+                            $(window).off("resize scroll");
+                        }
+                    }));
+                }
+
+                return;
+            }
+
+            var $buttons = $button.closest("td").find("button");
+            if ($(this).data("confirm")) {
+                confirm($(this).data("confirm"), function (ret) {
+                    if (!ret) return;
+                    $buttons.prop("disabled", true).button("refresh");
+                    handleResponse(doRequest($form, action, postURL), postURL, forbiddenRedirectURL).fail(function() {
+                        $buttons.prop("disabled", false).button("refresh");
+                    });
+
+                });
+            } else {
+                $buttons.prop("disabled", true).button("refresh");
+                handleResponse(doRequest($form, action, postURL), postURL, forbiddenRedirectURL).fail(function() {
+                    $buttons.prop("disabled", false).button("refresh");
+                });
+            }
+        });
+    });
+</script>
+<p class="hint" style="font-variant: small-caps;font-size: small;">
+    <?= tohtml(tr("Below you can activate/deactivate Let's Encrypt for the control panel and/or services (FTP, IMAP/POP, SMTP).")); ?>
+</p>
+<div class="static_info">
+    <strong><?= tohtml(tr("Let's Encrypt Rate-limits")); ?></strong>
+    <br><br>
+    <?= tohtml(tr("There are Let's Encrypt rate limits such as the 'Per Registered Domain' limit for SSL certificate issuance (20 per week).")); ?>
+    <br>
+    <?= tohtml(tr('A registered domain is, generally speaking, the part of the domain you purchased from your domain name registrar.')); ?>
+    <br>
+    <?= tohtml(tr("If you hit a Let's Encrypt limit, the task for your SSL certificate will be automatically queued for a later processing.")); ?>
+    <br><br>
+    <strong><a href="https://letsencrypt.org/docs/rate-limits/" target="_blank"><?= tohtml(tr("Please consult the Let's Encrypt Rate Limits documentation for further details.")); ?></a></strong>
+</div>
+<table id="ssl_datatable" style="white-space: inherit;">
+    <thead>
+    <tr>
+        <th style="width:10%"><?= tohtml(tr('Target')); ?></th>
+        <th style="width:20%"><?= tohtml(tr('Certificate name')); ?></th>
+        <th style="width:10%"><?= tohtml(tr('Expiry date')); ?></th>
+        <th style="width:10%"><?= tohtml(tr('Next renewal date')); ?></th>
+        <th style="width:20%"><?= tohtml(tr('Status')); ?></th>
+        <th style="width:30%"><?= tohtml(tr('Actions')); ?></th>
+    </tr>
+    </thead>
+    <tfoot>
+    <tr>
+        <td><?= tohtml(tr('Target')); ?></td>
+        <td><?= tohtml(tr('Certificate name')); ?></td>
+        <td><?= tohtml(tr('Expiry date')); ?></td>
+        <td><?= tohtml(tr('Next renewal date')); ?></td>
+        <td><?= tohtml(tr('Status')); ?></td>
+        <td><?= tohtml(tr('Actions')); ?></td>
+    </tr>
+    </tfoot>
+    <tbody>
+    <!-- BDP: letsencrypt_item -->
+    <tr>
+        <td>
+            {TR_LETSENCRYPT_TARGET}
+        </td>
+        <td>
+            <strong>{LETSENCRYPT_CERTIFICATE_NAME}</strong>
+        </td>
+        <td>
+            {LETSENCRYPT_EXPIRE_DATE}
+        </td>
+        <td>
+            {LETSENCRYPT_NEXT_RENEWAL_DATE}
+        </td>
+        <td>
+            {LETSENCRYPT_STATUS}
+            {LETSENCRYPT_STATUS_TOOLTIP}
+        </td>
+        <td>
+            <form id="{LETSENCRYPT_TARGET}">
+                <!-- BDP: letsencrypt_button1 -->
+                <button type="button" data-action="{LETSENCRYPT_BUTTON1_ACTION_VAL}" data-error="{LETSENCRYPT_BUTTON1_HAS_ERROR}" data-confirm="{LETSENCRYPT_BUTTON1_CONFIRM}">{LETSENCRYPT_BUTTON1_ACTION}</button>
+                <!-- EDP: letsencrypt_button1 -->
+                <!-- BDP: letsencrypt_button2 -->
+                <button type="button" data-action="{LETSENCRYPT_BUTTON2_ACTION_VAL}" data-confirm="{LETSENCRYPT_BUTTON2_CONFIRM}">{LETSENCRYPT_BUTTON2_ACTION}</button>
+                <!-- EDP: letsencrypt_button2 -->
+                <!-- BDP: letsencrypt_button3 -->
+                <div style="display:none" class="settings_dialog">
+                    <div class="static_info"><?= tohtml(tr('You can add up-to 100 DNS names (one per line).')); ?></div>
+                    <label><textarea style="height:170px;" name="letsencrypt_sans" form="{LETSENCRYPT_TARGET}">{LETSENCRYPT_SANS}</textarea></label>
+                </div>
+                <button type="button" data-action="settings"><?= tohtml(tr('DNS names')); ?></button>
+                <!-- EDP: letsencrypt_button3 -->
+                <input type="hidden" name="letsencrypt_target" value="{LETSENCRYPT_TARGET}">
+            </form>
+        </td>
+    </tr>
+    <!-- EDP: letsencrypt_item -->
+    </tbody>
+</table>
+<script src="/LetsEncrypt/themes/default/assets/js/jquery.ba-throttle-debounce.min.js"></script>
+<script src="/LetsEncrypt/themes/default/assets/js/letsencrypt.min.js"></script>

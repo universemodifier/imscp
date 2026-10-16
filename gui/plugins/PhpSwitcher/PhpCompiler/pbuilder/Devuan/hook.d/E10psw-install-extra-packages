@@ -1,0 +1,15 @@
+#!/bin/bash
+# i-MSCP PhpSwitcher plugin
+#
+# @author        Laurent Declercq <l.declercq@nuxwin.com>
+# @copyright (C) 2014-2019 Laurent Declercq <l.declercq@nuxwin.com>
+# @license       i-MSCP License <https://www.i-mscp.net/license-agreement.html>
+
+# Installs extra packages on chroot environment creation/update. This is needed
+# because the extra packages set through the EXTRACPACKAGES variable from the
+# .pbuilderrc configuration file are not taken into account at the creation
+# stage with older pbuilder versions
+
+/usr/bin/apt-get -y install \
+apt-transport-https apt-utils ca-certificates devscripts eatmydata equivs \
+gnupg2 libfile-fcntllock-perl quilt wget

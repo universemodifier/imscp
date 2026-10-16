@@ -1,0 +1,15 @@
+# i-MSCP PhpSwitcher plugin
+#
+# @author        Laurent Declercq <l.declercq@nuxwin.com>
+# @copyright (C) 2014-2019 Laurent Declercq <l.declercq@nuxwin.com>
+# @license       i-MSCP License <https://www.i-mscp.net/license-agreement.html>
+
+DISTRIBUTION="$DIST"
+APTCACHE="/var/cache/pbuilder/psw-aptcache-$(echo "$DISTRIBUTOR_ID" | awk '{print tolower($0)}')-$DISTRIBUTION"
+APTCACHEHARDLINK=yes
+DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--variant=minbase" "--keyring=$PSW_COMPILER_ROOT_DIR/pbuilder/devuan/debootstrap/devuan-archive-keyring.gpg")
+EXTRAPACKAGES="apt-transport-https apt-utils ca-certificates devscripts eatmydata equivs gnupg2 quilt wget"
+EATMYDATA=yes
+MIRRORSITE="http://deb.devuan.org/merged"
+COMPONENTS=main
+OTHERMIRROR="deb $MIRRORSITE $DISTRIBUTION-security $COMPONENTS|deb $MIRRORSITE $DISTRIBUTION-updates $COMPONENTS"

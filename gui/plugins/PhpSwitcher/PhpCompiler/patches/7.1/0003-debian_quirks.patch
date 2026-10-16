@@ -1,0 +1,43 @@
+From: Debian PHP Maintainers <pkg-php-maint@lists.alioth.debian.org>
+Date: Sat, 2 May 2015 10:26:51 +0200
+Subject: debian_quirks
+
+---
+ configure.in          |    3 ++-
+ scripts/php-config.in |    4 ++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
+
+--- a/configure.in
++++ b/configure.in
+@@ -1095,7 +1095,7 @@ if test "$PHP_CLI" = "no"; then
+ fi
+ 
+ PHP_ARG_WITH(pear, [whether to install PEAR],
+-[  --with-pear=DIR         Install PEAR in DIR @<:@PREFIX/lib/php@:>@
++[  --with-pear=DIR         Install PEAR in DIR @<:@PREFIX/share/php@:>@
+   --without-pear          Do not install PEAR], DEFAULT, yes)
+ 
+ if test "$PHP_PEAR" != "no"; then
+@@ -1539,6 +1539,7 @@ $php_shtool mkdir -p scripts/man1
+ ALL_OUTPUT_FILES="php7.spec main/build-defs.h \
+ scripts/phpize scripts/man1/phpize.1 \
+ scripts/php-config scripts/man1/php-config.1 \
++ext/ext_skel
+ $PHP_OUTPUT_FILES"
+ 
+ dnl
+--- a/scripts/php-config.in
++++ b/scripts/php-config.in
+@@ -7,10 +7,10 @@ exec_prefix="@exec_prefix@"
+ version="@PHP_VERSION@"
+ vernum="@PHP_VERSION_ID@"
+ include_dir="@includedir@/php"
+-includes="-I$include_dir -I$include_dir/main -I$include_dir/TSRM -I$include_dir/Zend -I$include_dir/ext -I$include_dir/ext/date/lib"
++includes="-I$include_dir -I$include_dir/main -I$include_dir/TSRM -I$include_dir/Zend -I$include_dir/ext -I$include_dir/ext/date/lib $(getconf LFS_CFLAGS)"
+ ldflags="@PHP_LDFLAGS@"
+ libs="@EXTRA_LIBS@"
+-extension_dir='@EXTENSION_DIR@'
++extension_dir="@EXTENSION_DIR@"
+ man_dir=`eval echo @mandir@`
+ program_prefix="@program_prefix@"
+ program_suffix="@program_suffix@"

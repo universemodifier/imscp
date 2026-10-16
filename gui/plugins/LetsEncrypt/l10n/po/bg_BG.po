@@ -1,0 +1,432 @@
+# i-MSCP LetsEncrypt plugin
+# Copyright (C) 2016-2018 Laurent Declercq - All rights reserved
+# This file is distributed under the same license as the PACKAGE package.
+# Laurent Declercq <l.declercq@nuxwin.com>, 2016-2018.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: LetsEncrypt 3.4.0\n"
+"Report-Msgid-Bugs-To: l.declercq@nuxwin.com\n"
+"POT-Creation-Date: 2018-06-02 08:55+0200\n"
+"PO-Revision-Date: 2018-06-02 18:18+0300\n"
+"Last-Translator: Laurent Declercq <l.declercq@nuxwin.com>\n"
+"Language-Team: \n"
+"Language: bg_BG\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.0.7\n"
+
+#: frontend/client/letsencrypt.php:374 frontend/admin/letsencrypt.php:253
+#, php-format
+msgid "1 day"
+msgid_plural "%d days"
+msgstr[0] "1 ден"
+msgstr[1] "%d дни"
+
+#: frontend/client/letsencrypt.php:231 frontend/client/letsencrypt.php:280
+#: frontend/admin/letsencrypt.php:111 frontend/admin/letsencrypt.php:158
+msgid "A new SSL certificate will be issued."
+msgstr "Ще бъде издаден нов SSL сертификат."
+
+#: themes/default/view/client/letsencrypt.phtml:99
+#: themes/default/view/admin/letsencrypt.phtml:99
+msgid ""
+"A registered domain is, generally speaking, the part of the domain you "
+"purchased from your domain name registrar."
+msgstr ""
+"Регистриран домейн е, общо взето, частта от домейна, който сте закупили от "
+"вашия регистратор на домейни."
+
+#: LetsEncrypt.php:208
+msgid "A task for SSL certificate is in progress."
+msgstr "Задача за SSL сертификата е в ход."
+
+#: themes/default/view/client/letsencrypt.phtml:113
+#: themes/default/view/client/letsencrypt.phtml:122
+#: themes/default/view/admin/letsencrypt.phtml:113
+#: themes/default/view/admin/letsencrypt.phtml:123
+msgid "Actions"
+msgstr "Действиe"
+
+#: frontend/library/ImscpLetsEncrypt/Utils.php:32
+msgid "Activated"
+msgstr "Активиран"
+
+#: frontend/admin/letsencrypt.php:357
+msgid "Admin / System Tools / Let's Encrypt"
+msgstr "Админ / Системни инструменти / Let's Encrypt"
+
+#: LetsEncrypt.php:289 frontend/client/letsencrypt.php:462
+#: frontend/admin/letsencrypt.php:342
+#: frontend/library/ImscpLetsEncrypt/Utils.php:44
+msgid "An unexpected error occurred."
+msgstr "Възникна неочаквана грешка."
+
+#: themes/default/view/client/letsencrypt.phtml:33
+#: themes/default/view/admin/letsencrypt.phtml:33
+msgid "Apply changes"
+msgstr "Приложи промените"
+
+#: frontend/client/letsencrypt.php:439 frontend/admin/letsencrypt.php:319
+msgid "Are you sure you want to cancel the SSL certificate issuance?"
+msgstr "Наистина ли искате да анулирате заявката за SSL сертификата?"
+
+#: frontend/client/letsencrypt.php:441 frontend/admin/letsencrypt.php:321
+msgid ""
+"Are you sure you want to cancel the SSL certificate renewal? The cancelation "
+"will lead to revocation and full deletion of the SSL certificate if one is "
+"existing. However, this will not prevent you to issue another one later on. "
+"The cancellation is the best option when something is going wrong and that a "
+"new attempt doesn't solve the problem."
+msgstr ""
+"Наистина ли искате да отмените обновяването на SSL сертификат? Анулирането "
+"ще доведе до отмяна и пълно изтриване на SSL сертификата, ако съществува "
+"такъв. Това обаче няма да ви попречи да издадете нов по-късно. Анулирането е "
+"най-добрият вариант, когато нещо се обърка, но нов опит за издаване на SSL "
+"сертификат не решава проблема."
+
+#: frontend/client/letsencrypt.php:437 frontend/admin/letsencrypt.php:317
+msgid ""
+"Are you sure you want to cancel the pending task for this SSL certificate? "
+"The cancelation will lead to revocation and full deletion of the SSL "
+"certificate if one is existing. However, this will not prevent you to issue "
+"another one later on. The cancellation is the best option when something is "
+"going wrong and that a new attempt doesn't solve the problem."
+msgstr ""
+"Наистина ли искате да отмените текущата задача за този SSL сертификат? "
+"Анулирането ще доведе до отмяна и пълно изтриване на SSL сертификата, ако "
+"съществува такъв. Това обаче няма да ви попречи да издадете нов по-късно ."
+"Анулирането е най-добрият вариант, когато нещо се обърка, но нов опит за "
+"издаване на SSL сертификат не решава проблема."
+
+#: frontend/client/letsencrypt.php:418 frontend/admin/letsencrypt.php:298
+msgid ""
+"Are you sure you want to manually trigger a new attempt? A pending task "
+"generally means that you've reached a Let's Encrypt rate limit. In such a "
+"case you should best wait for the next automatic attempt."
+msgstr ""
+"Сигурен ли сте, че искате да задействате новият опит ръчно? Предстоящата "
+"адача обикновено означава, че сте достигнали лимита на Let`s Encrypt. В "
+"такъв случай трябва да изчакате следващия автоматичен опит."
+
+#: frontend/client/letsencrypt.php:374 frontend/admin/letsencrypt.php:253
+#, php-format
+msgid ""
+"Are you sure you want to renew this SSL certificate manually? SSL "
+"certificates are renewed automatically. Manual renewal is only needed in "
+"very few cases, such as when the automatic renewal failed for an unknown "
+"reason. Note that the renewal will be performed only if the SSL certificate "
+"is effectively due for renewal, according our renewal policy which state "
+"that an SSL certificate will be renewed %s before its expiry date."
+msgstr ""
+"Наистина ли искате да подновите този сертификат ръчно? SSL сертификатите се "
+"подновяват автоматично. Ръчното подновяване е необходимо само в много редки "
+"случаи, например когато автоматичното подновяване е неуспешно поради "
+"неизвестна причина. Обърнете внимание, че подновяването ще се извърши само "
+"ако SSL сертификатът е действително е за подновяване, съгласно нашата "
+"политика за подновяване, според която SSL сертификатите трябва да бъдат "
+"подновявани %s преди изтичането на срока им на валидност."
+
+#: frontend/client/letsencrypt.php:377 frontend/admin/letsencrypt.php:256
+msgid ""
+"Are you sure you want to revoke this SSL certificate? Bear in mind that "
+"revoking an SSL certificate doesn't reset the Let's Encrypt rate limits."
+msgstr ""
+"Наистина ли искате да отмените този SSL сертификат? Имайте предвид, че "
+"анулирането на SSL сертификата  не възстановява лимита на Let`s Encrypt."
+
+#: frontend/client/letsencrypt.php:132 frontend/client/letsencrypt.php:141
+#: frontend/client/letsencrypt.php:210 frontend/client/letsencrypt.php:242
+#: frontend/admin/letsencrypt.php:32 frontend/admin/letsencrypt.php:86
+#: frontend/admin/letsencrypt.php:122
+msgid "Bad request."
+msgstr "Грешна заявка."
+
+#: themes/default/view/admin/letsencrypt.phtml:92
+msgid ""
+"Below you can activate/deactivate Let's Encrypt for the control panel and/or "
+"services (FTP, IMAP/POP, SMTP)."
+msgstr ""
+"По-долу можете да активирате / деактивирате  Let`s Encrypt за контролния "
+"панел или други услуги (FTP, IMAP/POP, SMTP)."
+
+#: themes/default/view/client/letsencrypt.phtml:92
+msgid ""
+"Below you can activate/deactivate Let's Encrypt for your domains and "
+"subdomains."
+msgstr ""
+"По-долу може да активирате / деактивирате Let`s Encrypt за вашия домейн или "
+"поддомейн."
+
+#: frontend/client/letsencrypt.php:434 frontend/admin/letsencrypt.php:314
+#: themes/default/view/client/letsencrypt.phtml:25
+#: themes/default/view/admin/letsencrypt.phtml:25
+msgid "Cancel"
+msgstr "Отмени"
+
+#: themes/default/view/client/letsencrypt.phtml:109
+#: themes/default/view/client/letsencrypt.phtml:118
+#: themes/default/view/admin/letsencrypt.phtml:109
+#: themes/default/view/admin/letsencrypt.phtml:119
+msgid "Certificate name"
+msgstr "Име на сертификат"
+
+#: frontend/client/letsencrypt.php:477
+msgid "Client / Domains / Let's Encrypt"
+msgstr "Клиент / Домейн / Let`s Encrypts"
+
+#: frontend/admin/letsencrypt.php:192
+msgid "Control Panel"
+msgstr "Контролен панел"
+
+#: frontend/admin/letsencrypt.php:91
+msgid ""
+"Couldn't issue new SSL certificate for the control panel. You must first "
+"enable SSL for the control panel by executing the 'imscp-reconfigure -dar "
+"panel_ssl' command. A self-signed SSL certificate is sufficient. It will be "
+"automatically replaced by the Let's Encrypt SSL certificate."
+msgstr ""
+"Не може да бъде издаден нов SSL сертификат за контролния панел. Първо трябва "
+"да активирате SSL за контролния панел, като изпълните командата  'imscp-"
+"reconfigure -dar panel_ssl' .  Самоподписания сертификат е достатъчен. Той "
+"ще бъде автоматично заменен от Let`s Encrypt SSL сертификат."
+
+#: frontend/admin/letsencrypt.php:94
+msgid ""
+"Couldn't issue new SSL certificate for the services. You must first enable "
+"SSL for the services by running the 'imscp-reconfigure -dar services_ssl' "
+"command. A self-signed SSL certificate is sufficient. It will be "
+"automatically replaced by Let's Encrypt SSL certificate."
+msgstr ""
+"Не може да бъде издаден нов SSL сертификат за другите услуги. Първо трябва "
+"да изпълните следната команда 'imscp-reconfigure -dar services_ssl. "
+"Самоподписаният сертификат е достатъчен. Той ще бъде автоматично заменен от "
+"Let`s Encrypt SSL сертификат."
+
+#: frontend/client/letsencrypt.php:349 frontend/admin/letsencrypt.php:227
+msgid "Create"
+msgstr "Създай"
+
+#: themes/default/view/client/letsencrypt.phtml:51
+#: themes/default/view/client/letsencrypt.phtml:154
+#: themes/default/view/admin/letsencrypt.phtml:51
+#: themes/default/view/admin/letsencrypt.phtml:158
+msgid "DNS names"
+msgstr "DNS запис"
+
+#: frontend/library/ImscpLetsEncrypt/Utils.php:40
+msgid "Deactivated"
+msgstr "Деактивиран"
+
+#: themes/default/view/client/letsencrypt.phtml:110
+#: themes/default/view/client/letsencrypt.phtml:119
+#: themes/default/view/admin/letsencrypt.phtml:110
+#: themes/default/view/admin/letsencrypt.phtml:120
+msgid "Expiry date"
+msgstr "Дата на изтичане"
+
+#: frontend/client/letsencrypt.php:415 frontend/admin/letsencrypt.php:295
+msgid "Force retry"
+msgstr "Повторен опит"
+
+#: LetsEncrypt.php:285
+msgid "HSTS parameters successfully scheduled for update."
+msgstr "HSTS параметрите са успешно зададени за актуализация."
+
+#: themes/default/view/client/letsencrypt.phtml:101
+#: themes/default/view/admin/letsencrypt.phtml:101
+msgid ""
+"If you hit a Let's Encrypt limit, the task for your SSL certificate will be "
+"automatically queued for a later processing."
+msgstr ""
+"Ако достигнете лимита на Let`s Encrypt SSL сертификата, то те ще бъдат "
+"автоматично добавени за по късна обработка."
+
+#: frontend/client/letsencrypt.php:257 frontend/admin/letsencrypt.php:137
+msgid "Issuance of the SSL certificate has been canceled."
+msgstr "Издаването на SSL сертификата бе отменено."
+
+#: LetsEncrypt.php:154 LetsEncrypt.php:162
+msgid "Let's Encrypt"
+msgstr "Let's Encrypt"
+
+#: themes/default/view/client/letsencrypt.phtml:95
+#: themes/default/view/admin/letsencrypt.phtml:95
+msgid "Let's Encrypt Rate-limits"
+msgstr "Let's Encrypt ограничителни лимити"
+
+#: frontend/client/letsencrypt.php:344 frontend/client/letsencrypt.php:345
+#: frontend/client/letsencrypt.php:362 frontend/client/letsencrypt.php:363
+#: frontend/admin/letsencrypt.php:222 frontend/admin/letsencrypt.php:223
+#: frontend/admin/letsencrypt.php:241 frontend/admin/letsencrypt.php:242
+msgid "N/A"
+msgstr "N/A"
+
+#: frontend/library/ImscpLetsEncrypt/Utils.php:34
+msgid "New SSL certificate issuance in progress..."
+msgstr "Новия SSL сертификат е в процес на издаване...."
+
+#: themes/default/view/client/letsencrypt.phtml:111
+#: themes/default/view/client/letsencrypt.phtml:120
+#: themes/default/view/admin/letsencrypt.phtml:111
+#: themes/default/view/admin/letsencrypt.phtml:121
+msgid "Next renewal date"
+msgstr "Следваща дата на подновяване"
+
+#: themes/default/view/client/letsencrypt.phtml:25
+#: themes/default/view/admin/letsencrypt.phtml:25
+msgid "Ok"
+msgstr "ОК"
+
+#: frontend/library/ImscpLetsEncrypt/Utils.php:42
+msgid "Pending"
+msgstr "Предстоящ"
+
+#: themes/default/view/client/letsencrypt.phtml:104
+#: themes/default/view/admin/letsencrypt.phtml:103
+msgid ""
+"Please consult the Let's Encrypt Rate Limits documentation for further "
+"details."
+msgstr ""
+"Моля, направете справка за ограничителните лимити на Let's Encrypt за да "
+"научите повече подробности."
+
+#: frontend/client/letsencrypt.php:421 frontend/admin/letsencrypt.php:301
+msgid ""
+"Prior triggering a new attempt for SSL certificate issuance or renewal, make "
+"sure that the problem that led to the error is solved. Bear in mind that "
+"there is a Let's Encrypt limit of 5 validation failures per account, per "
+"hostname, per hour."
+msgstr ""
+"Преди да задействате нов опит за издаване или подновяване на SSL сертификат, "
+"уверете се, че проблемът, довел до грешката, е разрешен. Имайте предвид, че "
+"Let`s Encrypt има ограничение от 5 неуспешни потвърждения за потребител, "
+"хост, час."
+
+#: frontend/client/letsencrypt.php:420 frontend/admin/letsencrypt.php:300
+msgid ""
+"Prior triggering a new attempt for SSL certificate revocation, make sure "
+"that the problem that led to the error is solved."
+msgstr ""
+"Преди да задействате нов опит за отмяна на SSL сертификат, уверете се, че "
+"проблемът, довел до грешката, е разрешен."
+
+#: frontend/client/letsencrypt.php:372 frontend/admin/letsencrypt.php:251
+msgid "Renew"
+msgstr "Подновяване"
+
+#: frontend/client/letsencrypt.php:375 frontend/admin/letsencrypt.php:254
+msgid "Revoke"
+msgstr "Отмяна"
+
+#: frontend/library/ImscpLetsEncrypt/Utils.php:36
+msgid "SSL certificate renewal in progress..."
+msgstr "SSL сертификата е в процес на подновяване..."
+
+#: frontend/library/ImscpLetsEncrypt/Utils.php:38
+msgid "SSL certificate revocation in progress..."
+msgstr "SSL сертификата е в процес на отмяна..."
+
+#: frontend/admin/letsencrypt.php:193
+msgid "Services"
+msgstr "Услуги"
+
+#: themes/default/view/client/letsencrypt.phtml:112
+#: themes/default/view/client/letsencrypt.phtml:121
+#: themes/default/view/admin/letsencrypt.phtml:112
+#: themes/default/view/admin/letsencrypt.phtml:122
+msgid "Status"
+msgstr "Статус"
+
+#: themes/default/view/admin/letsencrypt.phtml:108
+#: themes/default/view/admin/letsencrypt.phtml:118
+msgid "Target"
+msgstr "Цел"
+
+#: frontend/client/letsencrypt.php:183
+#, php-format
+msgid "The %s DNS name is either invalid or not allowed."
+msgstr "%s DNS записа е невалиден или не е разрешен."
+
+#: frontend/client/letsencrypt.php:184 frontend/admin/letsencrypt.php:64
+#, php-format
+msgid "The %s DNS name is invalid."
+msgstr "%s DNS записа не валиден."
+
+#: frontend/client/letsencrypt.php:283 frontend/admin/letsencrypt.php:160
+msgid "The SSL certificate will be renewed."
+msgstr "SSL сертификатът ще бъде подновен."
+
+#: frontend/client/letsencrypt.php:260 frontend/admin/letsencrypt.php:139
+msgid "The SSL certificate will be revoked."
+msgstr "SSL сертификатът ще бъде отменен."
+
+#: frontend/client/letsencrypt.php:406 frontend/admin/letsencrypt.php:285
+msgid ""
+"The issuance of this SSL certificate has been queued for later processing."
+msgstr ""
+"Издаването на този SSL сертификат е поставено на опашка за последваща "
+"обработка."
+
+#: frontend/client/letsencrypt.php:408 frontend/admin/letsencrypt.php:287
+msgid ""
+"The renewal of this SSL certificate has been queued for later processing."
+msgstr ""
+"Подновяването на този сертификат за SSL бе поставено на опашка за последваща "
+"обработка."
+
+#: frontend/client/letsencrypt.php:409 frontend/admin/letsencrypt.php:288
+msgid ""
+"The revocation of this SSL certificate has been queued for later processing."
+msgstr ""
+"Отмяната на този SSL сертификат е поставена на опашка за последваща "
+"обработка."
+
+#: themes/default/view/client/letsencrypt.phtml:97
+#: themes/default/view/admin/letsencrypt.phtml:97
+msgid ""
+"There are Let's Encrypt rate limits such as the 'Per Registered Domain' "
+"limit for SSL certificate issuance (20 per week)."
+msgstr ""
+"Let`s Encrypt има ограничителен лимит  за издаване на SSL сертификат за "
+"'Регистрирани Домейни'  (20 за седмица)."
+
+#: LetsEncrypt.php:217
+#, php-format
+msgid ""
+"This SSL certificate is managed by Let's Encrypt. Therefore, you can only "
+"change HSTS parameters. For any other action, go to the <a href=\"%s\">Let's "
+"Encrypt</a> interface."
+msgstr ""
+"Този SSL сертификат се управлява от Let`s Encrypt. Следователно може да "
+"промените само параметрите на HSTS. За всяко друго действие отидете на <a "
+"href=\"%s\">Let's Encrypt</a> . "
+
+#: themes/default/view/client/letsencrypt.phtml:151
+#: themes/default/view/admin/letsencrypt.phtml:155
+msgid "You can add up-to 100 DNS names (one per line)."
+msgstr "Можете да добавите до 100 DNS записа (по един на ред)."
+
+#: frontend/client/letsencrypt.php:164 frontend/admin/letsencrypt.php:57
+msgid "You cannot add more than 100 DNS names per SSL certificate."
+msgstr "Не можете да добавите повече от 100 DNS записа за SSL сертификат."
+
+#: LetsEncrypt.php:243
+msgid ""
+"You cannot delete an SSL certificate that is managed by Let's Encrypt "
+"through this page. You can only change HSTS parameters."
+msgstr ""
+"Не можете да изтриете SSL сертификат, който се управлява от Let`s Encrypt "
+"чрез тази страница. Можете да променяте само параметрите на HSTS."
+
+#: frontend/client/letsencrypt.php:405 frontend/admin/letsencrypt.php:284
+#, php-format
+msgid "You've hit a Let's Encrypt rate limit: %s"
+msgstr "Достигнахте %s ограничителния лимит за Let`s Encrypt"
+
+#: frontend/client/letsencrypt.php:235 frontend/client/letsencrypt.php:291
+#: frontend/admin/letsencrypt.php:115 frontend/admin/letsencrypt.php:167
+msgid "success"
+msgstr "успешно"

@@ -1,0 +1,2 @@
+#Type Path        Mode UID      GID      Age Argument
+    d {PHP_FPM_RUN_DIR}    0755 www-data www-data -   -

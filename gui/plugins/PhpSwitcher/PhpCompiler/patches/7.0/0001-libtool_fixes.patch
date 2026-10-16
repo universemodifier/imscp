@@ -1,0 +1,32 @@
+From: Debian PHP Maintainers <pkg-php-maint@lists.alioth.debian.org>
+Date: Sat, 2 May 2015 10:26:50 +0200
+Subject: libtool_fixes
+
+---
+ TSRM/configure.in |    3 ---
+ configure.in      |    2 --
+ 2 files changed, 5 deletions(-)
+
+--- a/TSRM/configure.in
++++ b/TSRM/configure.in
+@@ -17,9 +17,6 @@
+ TSRM_THREADS_CHECKS
+ 	
+ AM_PROG_LIBTOOL
+-if test "$enable_debug" != "yes"; then
+-  AM_SET_LIBTOOL_VARIABLE([--silent])
+-fi
+ 
+ dnl TSRM_PTHREAD
+ 
+--- a/configure.in
++++ b/configure.in
+@@ -1427,8 +1427,6 @@
+ ])
+ AC_PROG_LIBTOOL
+ 
+-PHP_SET_LIBTOOL_VARIABLE([--silent])
+-
+ dnl libtool 1.4.3 needs this.
+ PHP_SET_LIBTOOL_VARIABLE([--preserve-dup-deps])
+ 

@@ -1,0 +1,15 @@
+---
+ pear/Makefile.frag |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/pear/Makefile.frag
++++ b/pear/Makefile.frag
+@@ -1,7 +1,7 @@
+ peardir=$(PEAR_INSTALLDIR)
+ 
+ # Skip all php.ini files altogether
+-PEAR_INSTALL_FLAGS = -n -dshort_open_tag=0 -dopen_basedir= -derror_reporting=1803 -dmemory_limit=-1 -ddetect_unicode=0
++PEAR_INSTALL_FLAGS = -n -dshort_open_tag=0 -dopen_basedir= -ddisplay_errors=0 -derror_reporting=1803 -dmemory_limit=-1 -ddetect_unicode=0
+ 
+ WGET = `which wget 2>/dev/null`
+ FETCH = `which fetch 2>/dev/null`

@@ -303,6 +303,7 @@ sub install
             '--no-ansi',
             '--no-interaction',
             '--no-suggest',
+            '--ignore-platform-reqs',
             ( $nodev ? '--no-dev' : () ),
             ( $noautoloader ? '--no-autoloader' : () )
         ),
@@ -346,6 +347,7 @@ sub update
             '--no-ansi',
             '--no-interaction',
             '--no-suggest',
+            '--ignore-platform-reqs',
             ( $nodev ? '--no-dev' : () ),
             ( $noautoloader ? '--no-autoloader' : () ),
             @packages

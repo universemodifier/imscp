@@ -1,0 +1,261 @@
+LetsEncrypt plugin - ChangeLog
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+------------------------------------------------------------------------------------------------------------------------
+Version 3.5.0
+------------------------------------------------------------------------------------------------------------------------
+
+    Fixed: Cron job for SSL certificates renewal abort due to missing bind variable (SQL statement)
+    Fixed: Required distribution packages are not installed while plugin installation (regression fix)
+    Review: Default policy for SSL certificate renewal (automation) now set to 21 days to fit with Let's Encrypt expiry notices
+    Updated: Certbot from version 0.24.0 to version 0.26.1
+
+------------------------------------------------------------------------------------------------------------------------
+Version 3.4.2
+------------------------------------------------------------------------------------------------------------------------
+
+    Fixed: Couldn't restore default SSL certificate when a Let's Encrypt system SSL certificate is being revoked (shared lineages)
+    Fixed: Couldn't trigger new attempt for SSL certificate revocation (pending task): Missing SANs input field (expected)
+    Fixed: Error while renewing system SSL certificate (shared lineage case): Column 'domain_id' cannot be null
+    Fixed: System SSL certificates (control panel, services) not backed up
+    Fixed: Unprocessed SSL certificates on renewal (shared lineages)
+
+------------------------------------------------------------------------------------------------------------------------
+Version 3.4.1
+------------------------------------------------------------------------------------------------------------------------
+
+    Fixed: Staging environment (https://letsencrypt.org/docs/staging-environment/) must be disabled by default
+
+------------------------------------------------------------------------------------------------------------------------
+Version 3.4.0
+------------------------------------------------------------------------------------------------------------------------
+
+    Added: Bulgarian translation file (Bulgaria)
+    Enhancement: Show next SSL certificate renewal date (automation) in UI (admin, client)
+    Fixed: Cron task for the pending tasks aborts too early due to check on SQL server status (Closes: #IP-1774)
+    Fixed: Cron task for SSL certificates renewal aborts too early due to check on SQL server status (Closes: #IP-1774)
+    Fixed: IDE inspections (PhpStorm), CS fixes (backend)
+    Removed: Local frontend side checks for the /.well-known/acme-challenge URL path reachability.
+    Removed: 'include_altnames' plugin configuration parameter: customers can now add DNS names (SANs) by themselves
+    Renamed: 'pending_wait' plugin configuration parameter to 'pending_policy'
+    Renamed: 'renew_before_expiry' plugin configuration parameter to 'renewal_policy'
+    Review: Default policy for SSL certificate renewal (automation) now set to 10 days
+    Updated: Certbot from version 0.15.0 to version 0.24.0
+    Updated: Translation files
+    Updated: Unit tests
+
+------------------------------------------------------------------------------------------------------------------------
+Version 3.3.0
+------------------------------------------------------------------------------------------------------------------------
+
+    Added: Missing Polish (Poland) machine object file
+    Fixed: Call `cerbot` instead of `certbot-auto` wrapper; certbot-auto is now used only for installation/update
+    Fixed: Don't log errors that have not meant to be raised
+    Changed: Moved lock file to /var/lock
+    Removed: `certbot_self_upgrade` configuration parameter (see the UPDATE.md file)
+    Removed: Support for i-MSCP 1.3.x Serie
+    Updated: certbot-auto from version 0.14.1 to version 0.15.0
+
+------------------------------------------------------------------------------------------------------------------------
+Version 3.2.1
+------------------------------------------------------------------------------------------------------------------------
+
+    Fixed: NOOP when reusing control panel or services SSL certificate (regression fix)
+    Updated: certbot-auto from version 0.14.1 to version 0.14.2
+
+------------------------------------------------------------------------------------------------------------------------
+Version 3.2.0
+------------------------------------------------------------------------------------------------------------------------
+
+    Added: Support for Devuan Jessie 1.0 RC (by patching certbot-auto)
+    Added: Custom user-agent for certbot (LetsEncrypt/<version> (i-MSCP Let's Encrypt plugin; +https://www.i-mscp.net)
+    Fixed: Can't use an undefined value as a HASH reference; DBI::selectrow_hashref() return undef on empty results
+    Fixed: Cron tasks are not registered on core upgrade/reconfiguration leading to unrenewed SSL certificates
+    Fixed: If a certificate is already expired, a new issuance is needed (pre-clean of the old lineage is needed)
+    Fixed: Self-upgrade of certbot-auto is now disabled by default to avoid breaking of plugin due to possible API changes.
+    Fixed: Unable to clean up challenge directory (certbot)
+    Fixed: Wrong ownership and permissions set on the /usr/local/share/ca-certificates/fakelerootx1.crt file
+    Renamed: `certbot_self_update' configuration parameter to `certbot_self_upgrade'
+    Updated: certbot-auto from version 0.13.0 to version 0.14.1
+    Updated: Dutch (Netherlands) translation file (Thanks to theemstra)
+    Updated: Unit tests
+
+------------------------------------------------------------------------------------------------------------------------
+Version 3.1.0
+------------------------------------------------------------------------------------------------------------------------
+
+    Added: Http test for the /.well-known/acme-challenge/ URL path reachability - Executed for all added SANs (FrontEnd)
+    Fixed: ACME challenge failure due to missing Apache2 reload after plugin activation (Certbot)
+    Fixed: Make use of the `--cert-name' option in all contexts to avoid duplicate SSL certificate errors (Certbot)
+    Fixed: Plugin installation/upgrade failure when SQL strict mode is enabled (FrontEnd)
+    Fixed: SQL TEXT data type cannot have default value - Error raised when SQL strict mode is enabled (FrontEnd)
+    Review: UI layout - Moved SANs data in dedicated dialog box for a cleaner overview (FrontEnd)
+    Removed: DNS checks - replaced by the /.well-known/acme-challenge/ URL path reachability http test (FrontEnd)
+    Removed: `resolvers' plugin configuration parameter
+    Removed: Useless information in administrator and client interfaces (FrontEnd)
+    Updated: certbot-auto from version 0.12.0 to version 0.13.0
+    Updated: Translation files
+
+------------------------------------------------------------------------------------------------------------------------
+Version 3.0.0
+------------------------------------------------------------------------------------------------------------------------
+
+    Added: Let's Encrypt `Fake LE Root X1' root certificate in list of trusted certificates (staging environment)
+    Added: textarea field for subject alternative names in both administrator and client interfaces
+    Added: `--now' command line option to force immediate execution of pending tasks (pending.pl script)
+    Changed: Default value for the `certbot_self_update' configuration parameter is now `true'
+    Changed: IDNs are now fully supported. Usage of the Certbot client development version is no longer required.
+    Changed: Usage of the new `delete' Certbot subcommand for deleting SSL certificate lineage instead of doing manually
+    Featured: Administrator can now add up-to 100 SANs in both control panel and services SSL certificates
+    Fixed: Automatically install required distribution packages
+    Fixed: Certbot client installation failure on Debian Stretch due to openssl extension build failure
+    Fixed: Couldn't enable Let's Encrypt for the control panel due to missing test on `services' target
+    Fixed: Don't process if Apache2 service is not running. Apache2 is required for ACME challenges
+    Fixed: Make sure that Certbot client get updated when the plugin is being updated
+    Fixed: Possible failure on plugin uninstallation due to duplicate entry for `domain_name' database key
+    Fixed: `[warn] Useless use of AllowOverride' warning (Apache2)
+    Review: Usage of new JS confirm dialog as provided by i-MSCP 1.4.x with backward compatibility in mind
+    Removed: /var/www/virtual/LetsEncrypt directory (replaced by %plugin_dir%/LetsEncrypt/acme)
+    Removed: Useless Let's Encrypt Apache2 vhost files for both control panel domain and system hostname
+    Rewriten: pending.pl and renew.pl script (cron)
+    Updated: certbot-auto from version 0.9.3 to version 0.12.0
+    Updated: Translation strings
+
+------------------------------------------------------------------------------------------------------------------------
+Version 2.0.5
+------------------------------------------------------------------------------------------------------------------------
+
+    Fixed: Deletion of domain alias or subdomain is short-circuited by SSL certificate revocation (Closes: #IP-1682)
+
+------------------------------------------------------------------------------------------------------------------------
+Version 2.0.4
+------------------------------------------------------------------------------------------------------------------------
+
+    Fixed: SSL certificate lineage not removed on SSL certificate revocation
+
+------------------------------------------------------------------------------------------------------------------------
+Version 2.0.3
+------------------------------------------------------------------------------------------------------------------------
+
+    Fixed: Deprecated vhost file that was introduced in version 1.3.0 was not removed
+    Fixed: Don't check plugin requirements twice when the plugin is being updated
+    Fixed: SSL certificate expiry date not updated in database (on renewal)
+    Renamed: Apache2 `vhost.conf' configuration file to `LetsEncrypt_Alias.conf'
+
+------------------------------------------------------------------------------------------------------------------------
+Version 2.0.2
+------------------------------------------------------------------------------------------------------------------------
+
+    Added: Polish (POLAND) translation file
+    Fixed: BC break with i-MSCP versions older than 1.3.6 (Plugin must be compatible with i-MSCP versions >= 1.3.1)
+    Fixed: Ignores certbot client error if the SSL certificate being revoked is unknown from the Let's Encrypt CA
+    Removed: Console log (js)
+    Updated: Translation files
+
+------------------------------------------------------------------------------------------------------------------------
+Version 2.0.1
+------------------------------------------------------------------------------------------------------------------------
+
+    Fixed: DB migration fails when database name for i-MSCP is other than `imscp' due to hardcoded db name (db migration)
+
+------------------------------------------------------------------------------------------------------------------------
+Version 2.0.0
+------------------------------------------------------------------------------------------------------------------------
+
+    Added: ASN.1 resource file for PKIX (Public-Key Infrastructure – X.509)
+    Added: `domain_id_domain_type' unique key in letsencrypt table (database)
+    Added: Notes regarding Let's Encrypt registration (README.md)
+    Added: Unit tests (backend)
+    Added: Warning regarding usage of the `include_altnames' configuration parameter (SANs for alternative URLs). (README.md)
+    Changed: Static warning for Let's Encrypt rate limits changed to static info (UI)
+    Fixed: Apache2 SSL vhosts are not generated for customers, due to a misplaced SQL statement (backend)
+    Fixed: Could not enable Let's Encrypt for the control panel and/or services if both are set with same domain (database)
+    Fixed: Could not enable Let's Encrypt for the control panel if the domain is also used at customer level or vice-versa (database)
+    Fixed: Could not enable Let's Encrypt for the services if the domain is also used at customer level or vice-versa (database)
+    Fixed: Cron tasks for pending and renewal tasks are not compatible with i-MSCP version older than 1.3.6 (cron)
+    Fixed: Cron tasks are not registered on i-MSCP update/reconfiguration (setup)
+    Fixed: Don't force renewal of SSL certificates when not really needed (backend)
+    Fixed: On SSL certificate revocation or shrinking, remove SSL certificate lineage(s) matching the domain name (backend) 
+    Fixed: Short-circuit SSL certificate revocation if the SSL certificate lineage matching the domain name is shared (backend)
+    Merged: Installation tasks with activation tasks (backend)
+    Merged: Uninstallation tasks with deactivation tasks (backend)
+    Moved: Let's Encrypt interface link in system tools page (admin level)
+    Removed: `domain_name' unique key in letsencrypt table (database)
+    Renamed: `certificates_dir_path' configuration parameter to `letsencrypt_storage_path' (config)
+    Rernamed: `renew_period` configuration parameter to `renew_before_expiry' (config)
+    Updated: Requirements section - i-MSCP version >= 1.3.1 (plugin API 1.0.5) is now required (README.md)
+    Updated: Translation files (UI)
+    Review: Avoid calling openssl for retrieving SSL certificate expiry date. The Convert::ASN1 library is now used (backend)
+    Rewritten: Plugin::LetsEncrypt package (backend)
+
+------------------------------------------------------------------------------------------------------------------------
+Version 1.3.0
+------------------------------------------------------------------------------------------------------------------------
+
+    Added: `include_altnames` configuration parameter (Closes: #IP-1657)
+    Added: Support for i-MSCP control panel and services SSL certificates
+    Fixed: Enforce non-interactive debconf frontend to avoid confusing debug log
+    Fixed: Installation fail due to missing certbot `--non-interactive' command line option (regression fix)
+    Fixed: Syntax error in SQL statement (iMSCP_Plugin_LetsEncrypt::afterDeleteCustomer() event listener)
+
+------------------------------------------------------------------------------------------------------------------------
+Version 1.2.0
+------------------------------------------------------------------------------------------------------------------------
+
+    Added: `certbot_self_update' configuration parameter (Allows to enable/disable self-update of the certbot client)
+    Added: `certbot_version' configuration parameter (Allows usage of development version of the certbot client)
+    Added: UPDATE.md file  (update notes for new versions)
+    Fixed: Avoid too many SQL queries by adding `admin_id', `domain_id' and `domain_type' columns to letsencrypt table
+    Fixed: Certbot client is never updated
+    Fixed: Could not disable HSTS for subdomains
+    Fixed: Don't try to revoke SSL certificates that are missing on the filesystem; Only remove the entries in database
+    Fixed: IDNs (Internationalized Domain Names) are now supported by LetsEncrypt (Closes: #IP-1648)
+    Fixed: The `www' prefix is now optional (Closes: #IP-1646)
+    Renamed: `certbot_cmd' configuration parameter to `certbot_path'
+    Renamed: `certbot_cmd_create_options' configuration parameter to `certbot_create_options'
+    Renamed: `certbot_cmd_revoke_options' configuration parameter to `certbot_revoke_options'
+    Updated: Certbot client to version 0.9.3
+    Updated: Translation files
+
+------------------------------------------------------------------------------------------------------------------------
+Version 1.1.2
+------------------------------------------------------------------------------------------------------------------------
+
+    Fixed: Don't use local resolver for validation of required DNS records
+
+------------------------------------------------------------------------------------------------------------------------
+Version 1.1.1
+------------------------------------------------------------------------------------------------------------------------
+
+    Fixed: LetsEncrypt plugin entries are not removed in some contexts
+    Fixed: On activation, force renewal of SSL certificates to also renew revoked SSL certificates
+    Fixed: Possibility to modify certificate on cert view page for subaliasses
+
+------------------------------------------------------------------------------------------------------------------------
+Version 1.1.0
+------------------------------------------------------------------------------------------------------------------------
+
+    Added: Button allowing customers to cancel activation of Let's Encrypt on error
+    Added: Check for DNS resource records existence (domain.tld A record and www.domain.tld CNAME record)
+    Added: Hungarian (HUNGARY) translation file
+    Changed: Default RSA key size (2048 instead of 4096) to mitigate latency on busy servers
+    Fixed: Could not access to /.well-known/acme-challenge/ when using apache2-mpm-itk
+    Fixed: IDNs are not supported by Let's Encrypt. IDNs must be ignored at this moment
+    Fixed: Possibility to copy certificates from text fields
+    Fixed: Show full error message on status column
+    Fixed: Wrong focus behavior for jQuery button
+    Fixed: Wrong handling of additional command line options (We now assume two tokens, max per array value)
+    Updated: Documentation in config.php file
+    Updated: Translation files
+
+------------------------------------------------------------------------------------------------------------------------
+Version 1.0.1
+------------------------------------------------------------------------------------------------------------------------
+
+    Fixed: Apache2 not reloaded - reload attribute is not defined
+
+------------------------------------------------------------------------------------------------------------------------
+Version 1.0.0
+------------------------------------------------------------------------------------------------------------------------
+
+    First release

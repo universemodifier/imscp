@@ -1,0 +1,25 @@
+#!/bin/bash
+# i-MSCP PhpSwitcher plugin
+#
+# @author        Laurent Declercq <l.declercq@nuxwin.com>
+# @copyright (C) 2014-2019 Laurent Declercq <l.declercq@nuxwin.com>
+# @license       i-MSCP License <https://www.i-mscp.net/license-agreement.html>
+
+# Install the PHP build dependencies before logging in to chroot via
+# login/execute
+
+tmpdir=$(/bin/mktemp --tmpdir --directory .psw-tmpdir-XXXXXX)
+
+trap '/bin/rm -Rf -- "$tmpdir"' EXIT
+
+cd "$tmpdir" || exit
+
+sed 's/{PHP_VERSION}/'"$PHP_VERSION"'/' \
+  "$PSW_COMPILER_ROOT_DIR/dependencies/build/$DISTRIBUTION/control" > ./control
+
+# Build package for installation of PHP build dependencies, and install it.
+/usr/bin/mk-build-deps \
+  --install \
+  --remove \
+  --tool "apt-get -y --auto-remove --no-install-recommends -o Debug::pkgProblemResolver=yes" \
+  ./control

@@ -1,0 +1,34 @@
+# i-MSCP PhpSwitcher plugin
+#
+# @author        Laurent Declercq <l.declercq@nuxwin.com>
+# @copyright (C) 2014-2019 Laurent Declercq <l.declercq@nuxwin.com>
+# @license       i-MSCP License <https://www.i-mscp.net/license-agreement.html>
+
+DISTRIBUTION="$DIST"
+APTCACHE="/var/cache/pbuilder/psw-aptcache-$(echo "$DISTRIBUTOR_ID" | awk '{print tolower($0)}')-$DISTRIBUTION"
+APTCACHEHARDLINK=yes
+DEBOOTSTRAPOPTS=("${DEBOOTSTRAPOPTS[@]}" "--variant=minbase")
+EXTRAPACKAGES="apt-transport-https apt-utils ca-certificates devscripts dirmngr eatmydata equivs gnupg2 quilt wget"
+EATMYDATA=yes
+
+case $ARCH in
+  amd64|i386)
+        MIRRORSITE=http://archive.ubuntu.com/ubuntu
+        ;;
+  sparc)
+        case $DISTRIBUTION in
+          gutsy)
+        MIRRORSITE=http://archive.ubuntu.com/ubuntu
+        ;;
+          *)
+        MIRRORSITE=http://ports.ubuntu.com/ubuntu-ports
+        ;;
+        esac
+        ;;
+  *)
+        MIRRORSITE=http://ports.ubuntu.com/ubuntu-ports
+        ;;
+esac
+
+COMPONENTS="main universe"
+OTHERMIRROR="deb $MIRRORSITE $DISTRIBUTION-security $COMPONENTS|deb $MIRRORSITE $DISTRIBUTION-updates $COMPONENTS"

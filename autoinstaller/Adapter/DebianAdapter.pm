@@ -73,8 +73,13 @@ sub preinstall
         && length $::imscpConfig{'PO_SERVER'}
         && length $::imscpConfig{'SQL_SERVER'}
     ) {
-        iMSCP::Getopt->skipDistPackages( FALSE );
-        iMSCP::Getopt->skipComposerUpdate( FALSE );
+        # A fresh install still runs these steps. An explicit command line
+        # choice is kept, so a rerun can skip Composer after it has already
+        # installed the frontEnd libraries.
+        iMSCP::Getopt->skipDistPackages( FALSE )
+            unless iMSCP::Getopt->skipDistPackages;
+        iMSCP::Getopt->skipComposerUpdate( FALSE )
+            unless iMSCP::Getopt->skipComposerUpdate;
         iMSCP::Getopt->fixPermissions( TRUE );
         iMSCP::Getopt->noprompt( FALSE ) unless iMSCP::Getopt->preseed;
     }

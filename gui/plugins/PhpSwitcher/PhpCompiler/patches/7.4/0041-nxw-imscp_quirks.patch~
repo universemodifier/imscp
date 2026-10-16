@@ -1,0 +1,154 @@
+---
+ modules.ini              |   63 +++++++++++++++++++++++++++++++++++++++++++++++
+ php.ini-production       |    4 +-
+ sapi/fpm/php-fpm.conf.in |   14 +++++-----
+ 3 files changed, 72 insertions(+), 9 deletions(-)
+
+--- /dev/null
++++ b/modules.ini
+@@ -0,0 +1,63 @@
++zend_extension = opcache
++
++extension = bcmath
++extension = bz2
++extension = calendar
++extension = ctype
++extension = curl
++extension = dom
++extension = enchant
++extension = exif
++extension = fileinfo
++extension = ffi
++extension = ftp
++extension = gd
++extension = gettext
++extension = gmp
++extension = iconv
++extension = imap
++extension = intl
++extension = json
++extension = ldap
++extension = mbstring
++extension = phar
++extension = posix
++extension = pspell
++extension = readline
++extension = shmop
++extension = simplexml
++extension = snmp
++extension = soap
++extension = sockets
++extension = sysvmsg
++extension = sysvsem
++extension = sysvshm
++extension = tidy
++extension = tokenizer
++extension = xmlreader
++extension = xmlrpc
++extension = xmlwriter
++extension = xsl
++extension = zip
++
++; Database extensions
++
++extension = dba
++
++extension = pdo
++
++extension = mysqlnd
++extension = mysqli
++extension = pdo_mysql
++
++extension = pgsql
++extension = pdo_pgsql
++
++extension = pdo_dblib
++extension = pdo_firebird
++
++extension = odbc
++extension = pdo_odbc
++
++extension = sqlite3
++extension = pdo_sqlite
+--- a/php.ini-production
++++ b/php.ini-production
+@@ -184,7 +184,7 @@ engine = On
+ ; Development Value: Off
+ ; Production Value: Off
+ ; http://php.net/short-open-tag
+-short_open_tag = Off
++short_open_tag = On
+ 
+ ; The number of significant digits displayed in floating point numbers.
+ ; http://php.net/precision
+@@ -788,7 +788,7 @@ enable_dl = Off
+ ; of zero causes PHP to behave as before.  Default is 1.  You should fix your scripts
+ ; to use SCRIPT_FILENAME rather than PATH_TRANSLATED.
+ ; http://php.net/cgi.fix-pathinfo
+-;cgi.fix_pathinfo=1
++cgi.fix_pathinfo=1
+ 
+ ; if cgi.discard_path is enabled, the PHP CGI binary can safely be placed outside
+ ; of the web tree and people will not be able to circumvent .htaccess security.
+--- a/sapi/fpm/php-fpm.conf.in
++++ b/sapi/fpm/php-fpm.conf.in
+@@ -14,14 +14,14 @@
+ ; Pid file
+ ; Note: the default prefix is @EXPANDED_LOCALSTATEDIR@
+ ; Default Value: none
+-;pid = run/php-fpm.pid
++pid = @EXPANDED_LOCALSTATEDIR@/run/phpswitcher/psw7.4-fpm.pid
+ 
+ ; Error log file
+ ; If it's set to "syslog", log is sent to syslogd instead of being written
+ ; into a local file.
+ ; Note: the default prefix is @EXPANDED_LOCALSTATEDIR@
+ ; Default Value: log/php-fpm.log
+-;error_log = log/php-fpm.log
++error_log = @EXPANDED_LOCALSTATEDIR@/log/phpswitcher/psw7.4-fpm.log
+ 
+ ; syslog_facility is used to specify what type of program is logging the
+ ; message. This lets syslogd specify that messages from different facilities
+@@ -34,7 +34,7 @@
+ ; instances running on the same server, you can change the default value
+ ; which must suit common needs.
+ ; Default Value: php-fpm
+-;syslog.ident = php-fpm
++syslog.ident = psw7.4-fpm
+ 
+ ; Log level
+ ; Possible Values: alert, error, warning, notice, debug
+@@ -63,7 +63,7 @@
+ ; interval set by emergency_restart_interval then FPM will restart. A value
+ ; of '0' means 'Off'.
+ ; Default Value: 0
+-;emergency_restart_threshold = 0
++emergency_restart_threshold = 10
+ 
+ ; Interval of time used by emergency_restart_interval to determine when
+ ; a graceful restart will be initiated.  This can be useful to work around
+@@ -71,13 +71,13 @@
+ ; Available Units: s(econds), m(inutes), h(ours), or d(ays)
+ ; Default Unit: seconds
+ ; Default Value: 0
+-;emergency_restart_interval = 0
++emergency_restart_interval = 1m
+ 
+ ; Time limit for child processes to wait for a reaction on signals from master.
+ ; Available units: s(econds), m(inutes), h(ours), or d(ays)
+ ; Default Unit: seconds
+ ; Default Value: 0
+-;process_control_timeout = 0
++process_control_timeout = 60s
+ 
+ ; The maximum number of processes FPM will fork. This has been designed to control
+ ; the global number of processes when using dynamic PM within a lot of pools.
+@@ -96,7 +96,7 @@
+ 
+ ; Send FPM to background. Set to 'no' to keep FPM in foreground for debugging.
+ ; Default Value: yes
+-;daemonize = yes
++daemonize = yes
+ 
+ ; Set open file descriptor rlimit for the master process.
+ ; Default Value: system defined value
